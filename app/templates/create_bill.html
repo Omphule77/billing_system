@@ -44,8 +44,7 @@
             </div>
 
             <nav class="flex-grow p-4 space-y-1 sidebar-scroll overflow-y-auto">
-                <a href="create_bill.html"
-                    class="flex items-center gap-3 p-3 hover:bg-blue-700 rounded transition text-sm"><i
+                <a href="#" class="flex items-center gap-3 p-3 hover:bg-blue-700 rounded transition text-sm"><i
                         class="fas fa-th-large w-5"></i> Create New Bill</a>
                 <a href="#" class="flex items-center gap-3 p-3 hover:bg-blue-700 rounded transition text-sm"><i
                         class="fas fa-exchange-alt w-5"></i> Transaction Master</a>
@@ -87,7 +86,7 @@
 
                     <div class="bg-gray-50 p-4 border-b flex flex-wrap justify-between items-center gap-4">
                         <h2 class="text-gray-700 font-bold flex items-center gap-2">
-                            <i class="fas fa-file-alt text-blue-500"></i> Purchase Items
+                            <i class="fas fa-file-alt text-blue-500"></i> Create New Bill
                         </h2>
                         <div class="flex gap-2">
                             <button class="p-2 text-red-500 bg-white border rounded hover:bg-red-50"><i
@@ -100,62 +99,18 @@
                     </div>
 
                     <div class="p-4 md:p-6">
-                        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                            <div>
-                                <label class="text-[11px] font-bold text-gray-500 uppercase">Category</label>
-                                <select
-                                    class="w-full mt-1 border rounded px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none">
-                                    <option>Search By Category</option>
-                                </select>
-                            </div>
-                            <div>
-                                <label class="text-[11px] font-bold text-gray-500 uppercase">Sub-Category</label>
-                                <select
-                                    class="w-full mt-1 border rounded px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none">
-                                    <option>Search By Sub Category</option>
-                                </select>
-                            </div>
-                            <div>
-                                <label class="text-[11px] font-bold text-gray-500 uppercase">Item</label>
-                                <select
-                                    class="w-full mt-1 border rounded px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none">
-                                    <option>Search By Item</option>
-                                </select>
-                            </div>
-                            <div>
-                                <label class="text-[11px] font-bold text-gray-500 uppercase">Status</label>
-                                <select
-                                    class="w-full mt-1 border rounded px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none">
-                                    <option>Search By Status</option>
-                                </select>
-                            </div>
-                            <div>
-                                <label class="text-[11px] font-bold text-gray-500 uppercase">Supplier</label>
-                                <select
-                                    class="w-full mt-1 border rounded px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none">
-                                    <option>Search By Supplier</option>
-                                </select>
-                            </div>
-                            <div>
-                                <label class="text-[11px] font-bold text-gray-500 uppercase">Invoice Number</label>
-                                <input type="text" placeholder="Enter Invoice No"
-                                    class="w-full mt-1 border rounded px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none">
-                            </div>
-
-                            <div class="sm:col-span-2 lg:col-span-2">
-                                <label class="text-[11px] font-bold text-gray-500 uppercase">Date Range & Search</label>
-                                <div class="flex flex-col sm:flex-row gap-2 mt-1">
-                                    <div class="flex flex-grow gap-2">
-                                        <input type="date"
-                                            class="w-full border rounded px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none">
-                                        <input type="date"
-                                            class="w-full border rounded px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none">
-                                    </div>
-                                    <button
-                                        class="w-full sm:w-auto bg-blue-600 hover:bg-blue-700 text-white px-8 py-2 rounded font-bold transition shadow-md">
-                                        SEARCH
-                                    </button>
+                        <div class="mb-6">
+                            <div class="w-full flex gap-2">
+                                <div class="relative flex-grow">
+                                    <input type="text" placeholder="Search vendors details..."
+                                        class="w-full pl-12 pr-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none shadow-sm text-gray-700 bg-gray-50 transition-all focus:bg-white">
+                                    <i
+                                        class="fas fa-search absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 text-lg"></i>
                                 </div>
+                                <button
+                                    class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-xl font-bold transition shadow-md whitespace-nowrap">
+                                    Search
+                                </button>
                             </div>
                         </div>
 
@@ -164,35 +119,84 @@
                                 <thead class="bg-blue-400 text-white">
                                     <tr>
                                         <th class="p-3 border-r border-blue-300">Sno</th>
-                                        <th class="p-3 border-r border-blue-300 whitespace-nowrap">Category</th>
-                                        <th class="p-3 border-r border-blue-300 whitespace-nowrap">Item Name</th>
                                         <th class="p-3 border-r border-blue-300 whitespace-nowrap">Vendor Details</th>
                                         <th class="p-3 border-r border-blue-300">Bill</th>
                                         <th class="p-3 border-r border-blue-300 whitespace-nowrap">Bill-Date</th>
-                                        <th class="p-3 border-r border-blue-300">Qty</th>
-                                        <th class="p-3">Unit</th>
+                                        <th class="p-3">Create Bill</th>
                                     </tr>
                                 </thead>
                                 <tbody class="divide-y divide-gray-200">
-                                    <tr class="hover:bg-blue-50 transition">
-                                        <td class="p-3 border-r">1</td>
-                                        <td class="p-3 border-r font-medium">Oil</td>
-                                        <td class="p-3 border-r italic text-gray-600">Super Exide 15w40 3.5 Ltr</td>
-                                        <td class="p-3 border-r font-bold text-blue-900">WINGSTUND TRADING PVT LTD</td>
-                                        <td class="p-3 border-r">7</td>
-                                        <td class="p-3 border-r">28 May 2018</td>
-                                        <td class="p-3 border-r font-bold">4.000</td>
-                                        <td class="p-3">PICS</td>
+                                    <tr class="hover:bg-blue-50 transition border-b">
+                                        <td class="p-4">1</td>
+                                        <td class="p-4 text-blue-900 font-semibold">WINGSTUND TRADING</td>
+                                        <td class="p-4">INV-001</td>
+                                        <td class="p-4">10 Jan 2024</td>
+                                        <td class="p-4">
+                                            <button
+                                                class="bg-blue-100 hover:bg-blue-200 text-blue-600 rounded-full w-8 h-8 flex items-center justify-center transition">
+                                                <i class="fas fa-plus"></i>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                    <tr class="bg-gray-50 hover:bg-blue-50 transition border-b">
+                                        <td class="p-4">2</td>
+                                        <td class="p-4 text-blue-900 font-semibold">FARM FRESH LTD</td>
+                                        <td class="p-4">INV-002</td>
+                                        <td class="p-4">11 Jan 2024</td>
+                                        <td class="p-4">
+                                            <button
+                                                class="bg-blue-100 hover:bg-blue-200 text-blue-600 rounded-full w-8 h-8 flex items-center justify-center transition">
+                                                <i class="fas fa-plus"></i>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                    <tr class="hover:bg-blue-50 transition border-b">
+                                        <td class="p-4">3</td>
+                                        <td class="p-4 text-blue-900 font-semibold">TECH WORLD INC</td>
+                                        <td class="p-4">INV-003</td>
+                                        <td class="p-4">12 Jan 2024</td>
+                                        <td class="p-4">
+                                            <button
+                                                class="bg-blue-100 hover:bg-blue-200 text-blue-600 rounded-full w-8 h-8 flex items-center justify-center transition">
+                                                <i class="fas fa-plus"></i>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                    <tr class="bg-gray-50 hover:bg-blue-50 transition border-b">
+                                        <td class="p-4">4</td>
+                                        <td class="p-4 text-blue-900 font-semibold">DAIRY BEST CO</td>
+                                        <td class="p-4">INV-004</td>
+                                        <td class="p-4">12 Jan 2024</td>
+                                        <td class="p-4">
+                                            <button
+                                                class="bg-blue-100 hover:bg-blue-200 text-blue-600 rounded-full w-8 h-8 flex items-center justify-center transition">
+                                                <i class="fas fa-plus"></i>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                    <tr class="hover:bg-blue-50 transition border-b">
+                                        <td class="p-4">5</td>
+                                        <td class="p-4 text-blue-900 font-semibold">OFFICE DEPOT</td>
+                                        <td class="p-4">INV-005</td>
+                                        <td class="p-4">13 Jan 2024</td>
+                                        <td class="p-4">
+                                            <button
+                                                class="bg-blue-100 hover:bg-blue-200 text-blue-600 rounded-full w-8 h-8 flex items-center justify-center transition">
+                                                <i class="fas fa-plus"></i>
+                                            </button>
+                                        </td>
                                     </tr>
                                     <tr class="bg-gray-50 hover:bg-blue-50 transition">
-                                        <td class="p-3 border-r">2</td>
-                                        <td class="p-3 border-r font-medium">Oil</td>
-                                        <td class="p-3 border-r italic text-gray-600">Super Exide 15w40 3.5 Ltr</td>
-                                        <td class="p-3 border-r font-bold text-blue-900">WINGSTUND TRADING PVT LTD</td>
-                                        <td class="p-3 border-r">7</td>
-                                        <td class="p-3 border-r">28 May 2018</td>
-                                        <td class="p-3 border-r font-bold">4.000</td>
-                                        <td class="p-3">PICS</td>
+                                        <td class="p-4">6</td>
+                                        <td class="p-4 text-blue-900 font-semibold">FRESH SIPS LTD</td>
+                                        <td class="p-4">INV-006</td>
+                                        <td class="p-4">14 Jan 2024</td>
+                                        <td class="p-4">
+                                            <button
+                                                class="bg-blue-100 hover:bg-blue-200 text-blue-600 rounded-full w-8 h-8 flex items-center justify-center transition">
+                                                <i class="fas fa-plus"></i>
+                                            </button>
+                                        </td>
                                     </tr>
                                 </tbody>
                             </table>
@@ -207,6 +211,12 @@
             </footer>
         </main>
     </div>
+
+    <!-- Floating Action Button -->
+    <a href="{{ url_for('main.dashboard') }}"
+        class="fixed bottom-8 right-8 bg-blue-600 text-white p-4 rounded-full shadow-lg hover:bg-blue-700 transition transform hover:scale-110 flex items-center justify-center w-14 h-14 z-50">
+        <i class="fas fa-plus text-2xl"></i>
+    </a>
 
     <script>
         function toggleSidebar() {

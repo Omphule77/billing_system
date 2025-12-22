@@ -13,3 +13,7 @@ def dashboard():
 @bp.route('/bill')
 def bill():
     return render_template('bill.html')
+
+@bp.route('/create_bill.html')
+def create_bill():
+    return render_template('create_bill.html')
