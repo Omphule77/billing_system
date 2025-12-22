@@ -14,6 +14,10 @@ def dashboard():
 def bill():
     return render_template('bill.html')
 
-@bp.route('/create_bill.html')
+@bp.route('/create_bill')
 def create_bill():
     return render_template('create_bill.html')
+
+@bp.route('/add_item')
+def add_item():
+    return render_template('add_item.html')

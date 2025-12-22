@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SANIRO - Vegetable Billing</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        .bg-saniro-blue {
+            background-color: #2c4a92;
+        }
+
+        .bg-saniro-sky {
+            background-color: #5bb4e5;
+        }
+
+        .hover-saniro:hover {
+            background-color: #1e3a7a;
+        }
+    </style>
+</head>
+
+<body class="bg-gray-100 font-sans text-sm">
+
+    <div class="flex min-h-screen">
+        <aside id="sidebar"
+            class="fixed inset-y-0 left-0 z-50 w-64 bg-[#234b9b] text-white transform -translate-x-full transition-transform duration-300 ease-in-out md:relative md:translate-x-0 flex flex-col shadow-xl">
+
+            <div class="p-4 flex items-center justify-between border-b border-blue-800">
+                <div class="bg-white p-1 rounded px-3">
+                    <span class="text-[#234b9b] font-black text-xl tracking-tighter">SANIRO</span>
+                </div>
+                <button onclick="toggleSidebar()" class="md:hidden text-white"><i class="fas fa-times"></i></button>
+            </div>
+
+            <div class="p-6 text-center border-b border-blue-800 bg-[#1e3e82]">
+                <div
+                    class="w-16 h-16 bg-gray-200 rounded-full mx-auto mb-2 overflow-hidden border-2 border-white shadow-md">
+                    <img src="https://ui-avatars.com/api/?name=Ravi+Sharma&background=random" alt="User">
+                </div>
+                <p class="text-[10px] uppercase tracking-widest text-blue-300">Welcome,</p>
+                <p class="font-bold text-sm">Ravi Sharma</p>
+            </div>
+
+            <nav class="flex-grow p-4 space-y-1 sidebar-scroll overflow-y-auto">
+                <a href="#" class="flex items-center gap-3 p-3 hover:bg-blue-700 rounded transition text-sm"><i
+                        class="fas fa-th-large w-5"></i> Create New Bill</a>
+                <a href="#" class="flex items-center gap-3 p-3 hover:bg-blue-700 rounded transition text-sm"><i
+                        class="fas fa-exchange-alt w-5"></i> Transaction Master</a>
+                <a href="#" class="flex items-center gap-3 p-3 bg-blue-900 rounded transition text-sm shadow-inner"><i
+                        class="fas fa-shopping-cart w-5"></i> Purchase</a>
+                <a href="#" class="flex items-center gap-3 p-3 hover:bg-blue-700 rounded transition text-sm"><i
+                        class="fas fa-chart-line w-5"></i> Sales</a>
+                <a href="#" class="flex items-center gap-3 p-3 hover:bg-blue-700 rounded transition text-sm"><i
+                        class="fas fa-warehouse w-5"></i> Inventory</a>
+                <a href="#" class="flex items-center gap-3 p-3 hover:bg-blue-700 rounded transition text-sm"><i
+                        class="fas fa-file-invoice w-5"></i> Reports</a>
+                <a href="#" class="flex items-center gap-3 p-3 hover:bg-blue-700 rounded transition text-sm"><i
+                        class="fas fa-user-friends w-5"></i> CRM</a>
+            </nav>
+        </aside>
+
+        <main class="flex-grow flex flex-col min-w-0">
+            <header class="h-16 bg-white shadow-md flex items-center justify-between px-4 sticky top-0 z-40">
+                <div class="flex items-center gap-4">
+                    <button onclick="toggleSidebar()" class="text-blue-800 md:hidden text-xl"><i
+                            class="fas fa-bars"></i></button>
+                    <i class="fas fa-outdent text-gray-400 hidden md:block"></i>
+                </div>
+                <div class="flex items-center gap-4">
+                    <div class="flex gap-4 mr-4 border-r pr-4">
+                        <i class="fas fa-envelope text-blue-500 cursor-pointer"></i>
+                        <i class="fas fa-bell text-blue-500 cursor-pointer"></i>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <span class="text-sm font-bold text-gray-700 hidden sm:inline">John Doe</span>
+                        <img src="https://ui-avatars.com/api/?name=John+Doe" class="rounded-full w-8 h-8">
+                    </div>
+                </div>
+            </header>
+
+            <div class="p-6">
+                <div class="bg-white rounded shadow-sm border-t-4 border-saniro-blue p-6 mb-6">
+                    <h2 class="text-lg font-bold text-gray-700 mb-4 flex items-center gap-2">
+                        <i class="fas fa-plus-circle text-blue-500"></i> Add New Entry
+                    </h2>
+
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 items-end">
+                        <div>
+                            <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Select Vegetable</label>
+                            <select
+                                class="w-full border rounded-md p-2.5 text-sm bg-gray-50 focus:ring-2 focus:ring-blue-400 outline-none">
+                                <option>Carrot</option>
+                                <option>Broccoli</option>
+                                <option>Spinach</option>
+                                <option>Tomato</option>
+                                <option>Potato</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Quantity (in kg)</label>
+                            <input type="number" step="0.01" placeholder="0.00"
+                                class="w-full border rounded-md p-2.5 text-sm bg-gray-50 focus:ring-2 focus:ring-blue-400 outline-none">
+                        </div>
+
+                        <button
+                            class="bg-saniro-blue text-white py-2.5 rounded-md font-bold uppercase tracking-wider hover:bg-blue-800 transition shadow-md">
+                            Add to List
+                        </button>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded shadow-sm border overflow-hidden">
+                    <div class="bg-gray-50 p-4 border-b font-bold text-gray-600">
+                        Current Vegetable Stock
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left text-sm">
+                            <thead class="bg-saniro-sky text-white uppercase text-[11px] tracking-wider">
+                                <tr>
+                                    <th class="p-3 border-r border-blue-300">Sno</th>
+                                    <th class="p-3 border-r border-blue-300">Vegetable Name</th>
+                                    <th class="p-3 border-r border-blue-300">Quantity (KG)</th>
+                                    <th class="p-3 border-r border-blue-300 text-right">Rate / KG</th>
+                                    <th class="p-3 border-r border-blue-300 text-right">Total Amount</th>
+                                    <th class="p-3 text-center">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-gray-200">
+                                <tr class="hover:bg-blue-50 transition">
+                                    <td class="p-3 border-r">1</td>
+                                    <td class="p-3 border-r font-bold text-blue-900">Fresh Carrot</td>
+                                    <td class="p-3 border-r">15.50</td>
+                                    <td class="p-3 border-r text-right">$1.20</td>
+                                    <td class="p-3 border-r text-right font-bold">$18.60</td>
+                                    <td class="p-3 text-center">
+                                        <button class="text-red-500 hover:text-red-700 transition">
+                                            <i class="fas fa-times-circle text-lg"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                                <tr class="bg-gray-50 hover:bg-blue-50 transition">
+                                    <td class="p-3 border-r">2</td>
+                                    <td class="p-3 border-r font-bold text-blue-900">Organic Broccoli</td>
+                                    <td class="p-3 border-r">5.25</td>
+                                    <td class="p-3 border-r text-right">$3.50</td>
+                                    <td class="p-3 border-r text-right font-bold">$18.37</td>
+                                    <td class="p-3 text-center">
+                                        <button class="text-red-500 hover:text-red-700 transition">
+                                            <i class="fas fa-times-circle text-lg"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                                <tr class="hover:bg-blue-50 transition">
+                                    <td class="p-3 border-r">3</td>
+                                    <td class="p-3 border-r font-bold text-blue-900">Red Tomatoes</td>
+                                    <td class="p-3 border-r">25.00</td>
+                                    <td class="p-3 border-r text-right">$0.80</td>
+                                    <td class="p-3 border-r text-right font-bold">$20.00</td>
+                                    <td class="p-3 text-center">
+                                        <button class="text-red-500 hover:text-red-700 transition">
+                                            <i class="fas fa-times-circle text-lg"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                            <tfoot class="bg-saniro-blue text-white font-bold">
+                                <tr>
+                                    <td colspan="4" class="p-3 text-right uppercase text-xs">Total Stock Value</td>
+                                    <td class="p-3 text-right text-lg border-r border-blue-400">$56.97</td>
+                                    <td class="p-3"></td>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="mt-6 flex justify-end">
+                    <a href="{{ url_for('main.bill') }}"
+                        class="bg-green-600 hover:bg-green-700 text-white py-3 px-8 rounded shadow-lg font-bold uppercase tracking-wider transition flex items-center gap-2">
+                        <i class="fas fa-file-invoice-dollar"></i> Generate Bill
+                    </a>
+                </div>
+            </div>
+
+            <footer class="mt-auto p-4 text-center text-[10px] text-gray-400 border-t bg-white">
+                Copyright © 2025 | Designed by <span class="text-blue-500 font-bold">Saniro Technologies Pvt Ltd</span>
+            </footer>
+        </main>
+    </div>
+
+</body>
+
+</html>
