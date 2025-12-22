@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Invoice - Ecommerce Surface</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+
+<body class="bg-gray-200 py-10 px-4">
+
+    <div class="max-w-4xl mx-auto bg-white shadow-lg overflow-hidden border border-gray-200">
+
+        <div class="p-8 flex flex-col md:flex-row justify-between items-start md:items-center">
+            <div>
+                <div class="flex items-center gap-3 mb-4">
+                    <div class="bg-[#4a5f80] p-2 rounded text-white text-2xl">
+                        <i class="fas fa-shopping-cart"></i>
+                    </div>
+                    <h1 class="text-xl font-bold text-gray-800">Ecommerce Surface</h1>
+                </div>
+                <div class="text-sm text-gray-700 space-y-1">
+                    <p><strong>Invoice Number:</strong> 1330</p>
+                    <p><strong>Date:</strong> 02/02/2022</p>
+                </div>
+            </div>
+            <div class="mt-6 md:mt-0 bg-[#4a5f80] text-white px-10 py-3 text-4xl font-black tracking-widest uppercase">
+                Invoice
+            </div>
+        </div>
+
+        <hr class="border-t border-[#4a5f80] mx-8 opacity-30">
+
+        <div class="p-8 grid grid-cols-1 md:grid-cols-2 gap-8 text-sm">
+            <div>
+                <h3 class="font-bold text-gray-800 mb-2">Bill from:</h3>
+                <p class="text-gray-600">Company Name</p>
+                <p class="text-gray-600">Street Address, Zip Code</p>
+                <p class="text-gray-600">Phone Number</p>
+            </div>
+            <div class="md:text-left">
+                <h3 class="font-bold text-gray-800 mb-2">Bill to:</h3>
+                <p class="text-gray-600">Customer Name</p>
+                <p class="text-gray-600">Street Address, Zip Code</p>
+                <p class="text-gray-600">Phone Number</p>
+            </div>
+        </div>
+
+        <div class="px-8 overflow-x-auto">
+            <table class="w-full text-left text-sm border-t border-b border-black">
+                <thead>
+                    <tr class="text-gray-800 font-bold uppercase tracking-wider">
+                        <th class="py-4 px-2">Item</th>
+                        <th class="py-4 px-2 text-center">Quantity</th>
+                        <th class="py-4 px-2 text-center">Rate</th>
+                        <th class="py-4 px-2 text-center">Tax</th>
+                        <th class="py-4 px-2 text-right">Amount</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-gray-300">
+                    <tr>
+                        <td class="py-6 px-2 align-top">Subscription-Based</td>
+                        <td class="py-6 px-2 text-center align-top text-blue-600">
+                            30<br><span class="text-[10px] text-gray-500">days</span>
+                        </td>
+                        <td class="py-6 px-2 text-center align-top text-blue-600">
+                            $30.00<br><span class="text-[10px] text-gray-500">per month</span>
+                        </td>
+                        <td class="py-6 px-2 text-center align-top">0.00</td>
+                        <td class="py-6 px-2 text-right align-top">$30.00</td>
+                    </tr>
+                    <tr>
+                        <td class="py-6 px-2 align-top">Online Gift Certificates</td>
+                        <td class="py-6 px-2 text-center align-top text-blue-600">
+                            02<br><span class="text-[10px] text-gray-500">person</span>
+                        </td>
+                        <td class="py-6 px-2 text-center align-top text-blue-600">
+                            $175<br><span class="text-[10px] text-gray-500">per person</span>
+                        </td>
+                        <td class="py-6 px-2 text-center align-top">0.00</td>
+                        <td class="py-6 px-2 text-right align-top">$350.00</td>
+                    </tr>
+                    <tr>
+                        <td class="py-6 px-2 align-top">Business-to-Business</td>
+                        <td class="py-6 px-2 text-center align-top text-blue-600">01</td>
+                        <td class="py-6 px-2 text-center align-top text-blue-600">$3000.00</td>
+                        <td class="py-6 px-2 text-center align-top">0.00</td>
+                        <td class="py-6 px-2 text-right align-top">$3000.00</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="p-8 flex flex-col md:flex-row justify-between gap-6">
+            <div class="text-sm">
+                <p class="font-bold text-gray-800">Terms & Conditions:</p>
+            </div>
+            <div class="w-full md:w-64 space-y-2 text-sm">
+                <div class="flex justify-between">
+                    <span>Subtotal:</span>
+                    <span>$3380.00</span>
+                </div>
+                <div class="flex justify-between">
+                    <span>Discount:</span>
+                    <span>$0.00</span>
+                </div>
+                <div class="flex justify-between">
+                    <span>Tax:</span>
+                    <span>$0.00</span>
+                </div>
+                <div class="flex justify-between">
+                    <span>Paid:</span>
+                    <span>$0.00</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="bg-[#4a5f80] text-white p-4 mx-8 mb-8 flex justify-between items-center text-3xl font-light">
+            <span class="border-r border-white/30 pr-8">Total</span>
+            <span class="font-bold">$3380.00</span>
+        </div>
+
+    </div>
+
+</body>
+
+</html>

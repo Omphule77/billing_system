@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Responsive Billing Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        /* Custom scrollbar for sidebar */
+        .sidebar-scroll::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        .sidebar-scroll::-webkit-scrollbar-thumb {
+            background: #3b82f6;
+            border-radius: 10px;
+        }
+    </style>
+</head>
+
+<body class="bg-gray-100 font-sans overflow-x-hidden">
+
+    <div class="flex min-h-screen relative">
+
+        <aside id="sidebar"
+            class="fixed inset-y-0 left-0 z-50 w-64 bg-[#234b9b] text-white transform -translate-x-full transition-transform duration-300 ease-in-out md:relative md:translate-x-0 flex flex-col shadow-xl">
+
+            <div class="p-4 flex items-center justify-between border-b border-blue-800">
+                <div class="bg-white p-1 rounded px-3">
+                    <span class="text-[#234b9b] font-black text-xl tracking-tighter">SANIRO</span>
+                </div>
+                <button onclick="toggleSidebar()" class="md:hidden text-white"><i class="fas fa-times"></i></button>
+            </div>
+
+            <div class="p-6 text-center border-b border-blue-800 bg-[#1e3e82]">
+                <div
+                    class="w-16 h-16 bg-gray-200 rounded-full mx-auto mb-2 overflow-hidden border-2 border-white shadow-md">
+                    <img src="https://ui-avatars.com/api/?name=Ravi+Sharma&background=random" alt="User">
+                </div>
+                <p class="text-[10px] uppercase tracking-widest text-blue-300">Welcome,</p>
+                <p class="font-bold text-sm">Ravi Sharma</p>
+            </div>
+
+            <nav class="flex-grow p-4 space-y-1 sidebar-scroll overflow-y-auto">
+                <a href="#" class="flex items-center gap-3 p-3 hover:bg-blue-700 rounded transition text-sm"><i
+                        class="fas fa-th-large w-5"></i> Common Master</a>
+                <a href="#" class="flex items-center gap-3 p-3 hover:bg-blue-700 rounded transition text-sm"><i
+                        class="fas fa-exchange-alt w-5"></i> Transaction Master</a>
+                <a href="#" class="flex items-center gap-3 p-3 bg-blue-900 rounded transition text-sm shadow-inner"><i
+                        class="fas fa-shopping-cart w-5"></i> Purchase</a>
+                <a href="#" class="flex items-center gap-3 p-3 hover:bg-blue-700 rounded transition text-sm"><i
+                        class="fas fa-chart-line w-5"></i> Sales</a>
+                <a href="#" class="flex items-center gap-3 p-3 hover:bg-blue-700 rounded transition text-sm"><i
+                        class="fas fa-warehouse w-5"></i> Inventory</a>
+                <a href="#" class="flex items-center gap-3 p-3 hover:bg-blue-700 rounded transition text-sm"><i
+                        class="fas fa-file-invoice w-5"></i> Reports</a>
+                <a href="#" class="flex items-center gap-3 p-3 hover:bg-blue-700 rounded transition text-sm"><i
+                        class="fas fa-user-friends w-5"></i> CRM</a>
+            </nav>
+        </aside>
+
+        <main class="flex-grow flex flex-col w-full min-w-0">
+
+            <header class="h-16 bg-white shadow-md flex items-center justify-between px-4 sticky top-0 z-40">
+                <div class="flex items-center gap-4">
+                    <button onclick="toggleSidebar()" class="text-blue-800 md:hidden text-xl"><i
+                            class="fas fa-bars"></i></button>
+                    <i class="fas fa-outdent text-gray-400 hidden md:block"></i>
+                </div>
+                <div class="flex items-center gap-4">
+                    <div class="flex gap-4 mr-4 border-r pr-4">
+                        <i class="fas fa-envelope text-blue-500 cursor-pointer"></i>
+                        <i class="fas fa-bell text-blue-500 cursor-pointer"></i>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <span class="text-sm font-bold text-gray-700 hidden sm:inline">John Doe</span>
+                        <img src="https://ui-avatars.com/api/?name=John+Doe" class="rounded-full w-8 h-8">
+                    </div>
+                </div>
+            </header>
+
+            <div class="p-4 md:p-6">
+                <div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+
+                    <div class="bg-gray-50 p-4 border-b flex flex-wrap justify-between items-center gap-4">
+                        <h2 class="text-gray-700 font-bold flex items-center gap-2">
+                            <i class="fas fa-file-alt text-blue-500"></i> Purchase Items
+                        </h2>
+                        <div class="flex gap-2">
+                            <button class="p-2 text-red-500 bg-white border rounded hover:bg-red-50"><i
+                                    class="fas fa-file-pdf"></i></button>
+                            <button class="p-2 text-green-600 bg-white border rounded hover:bg-green-50"><i
+                                    class="fas fa-file-excel"></i></button>
+                            <button
+                                class="bg-blue-500 text-white px-4 py-1.5 rounded text-sm hover:bg-blue-600 font-bold">RELOAD</button>
+                        </div>
+                    </div>
+
+                    <div class="p-4 md:p-6">
+                        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                            <div>
+                                <label class="text-[11px] font-bold text-gray-500 uppercase">Category</label>
+                                <select
+                                    class="w-full mt-1 border rounded px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none">
+                                    <option>Search By Category</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="text-[11px] font-bold text-gray-500 uppercase">Sub-Category</label>
+                                <select
+                                    class="w-full mt-1 border rounded px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none">
+                                    <option>Search By Sub Category</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="text-[11px] font-bold text-gray-500 uppercase">Item</label>
+                                <select
+                                    class="w-full mt-1 border rounded px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none">
+                                    <option>Search By Item</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="text-[11px] font-bold text-gray-500 uppercase">Status</label>
+                                <select
+                                    class="w-full mt-1 border rounded px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none">
+                                    <option>Search By Status</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="text-[11px] font-bold text-gray-500 uppercase">Supplier</label>
+                                <select
+                                    class="w-full mt-1 border rounded px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none">
+                                    <option>Search By Supplier</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="text-[11px] font-bold text-gray-500 uppercase">Invoice Number</label>
+                                <input type="text" placeholder="Enter Invoice No"
+                                    class="w-full mt-1 border rounded px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none">
+                            </div>
+
+                            <div class="sm:col-span-2 lg:col-span-2">
+                                <label class="text-[11px] font-bold text-gray-500 uppercase">Date Range & Search</label>
+                                <div class="flex flex-col sm:flex-row gap-2 mt-1">
+                                    <div class="flex flex-grow gap-2">
+                                        <input type="date"
+                                            class="w-full border rounded px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none">
+                                        <input type="date"
+                                            class="w-full border rounded px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none">
+                                    </div>
+                                    <button
+                                        class="w-full sm:w-auto bg-blue-600 hover:bg-blue-700 text-white px-8 py-2 rounded font-bold transition shadow-md">
+                                        SEARCH
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mt-8 overflow-x-auto rounded-lg border border-gray-200">
+                            <table class="w-full text-sm text-left border-collapse">
+                                <thead class="bg-blue-400 text-white">
+                                    <tr>
+                                        <th class="p-3 border-r border-blue-300">Sno</th>
+                                        <th class="p-3 border-r border-blue-300 whitespace-nowrap">Category</th>
+                                        <th class="p-3 border-r border-blue-300 whitespace-nowrap">Item Name</th>
+                                        <th class="p-3 border-r border-blue-300 whitespace-nowrap">Vendor Details</th>
+                                        <th class="p-3 border-r border-blue-300">Bill</th>
+                                        <th class="p-3 border-r border-blue-300 whitespace-nowrap">Bill-Date</th>
+                                        <th class="p-3 border-r border-blue-300">Qty</th>
+                                        <th class="p-3">Unit</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="divide-y divide-gray-200">
+                                    <tr class="hover:bg-blue-50 transition">
+                                        <td class="p-3 border-r">1</td>
+                                        <td class="p-3 border-r font-medium">Oil</td>
+                                        <td class="p-3 border-r italic text-gray-600">Super Exide 15w40 3.5 Ltr</td>
+                                        <td class="p-3 border-r font-bold text-blue-900">WINGSTUND TRADING PVT LTD</td>
+                                        <td class="p-3 border-r">7</td>
+                                        <td class="p-3 border-r">28 May 2018</td>
+                                        <td class="p-3 border-r font-bold">4.000</td>
+                                        <td class="p-3">PICS</td>
+                                    </tr>
+                                    <tr class="bg-gray-50 hover:bg-blue-50 transition">
+                                        <td class="p-3 border-r">2</td>
+                                        <td class="p-3 border-r font-medium">Oil</td>
+                                        <td class="p-3 border-r italic text-gray-600">Super Exide 15w40 3.5 Ltr</td>
+                                        <td class="p-3 border-r font-bold text-blue-900">WINGSTUND TRADING PVT LTD</td>
+                                        <td class="p-3 border-r">7</td>
+                                        <td class="p-3 border-r">28 May 2018</td>
+                                        <td class="p-3 border-r font-bold">4.000</td>
+                                        <td class="p-3">PICS</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <footer
+                class="mt-auto p-6 text-center text-[11px] text-gray-400 uppercase tracking-widest border-t bg-white">
+                Copyright © 2024 | Designed by <span class="text-blue-500 font-bold">Saniro Technologies Pvt Ltd</span>
+            </footer>
+        </main>
+    </div>
+
+    <script>
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            sidebar.classList.toggle('-translate-x-full');
+        }
+    </script>
+</body>
+
+</html>

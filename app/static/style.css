@@ -1,0 +1,214 @@
+:root {
+    /* Premium Color Palette */
+    --primary-green: #2E7D32;
+    --secondary-green: #4CAF50;
+    --accent-green: #81C784;
+    --dark-bg: #121212;
+    --card-bg: #1E1E1E;
+    --text-primary: #FFFFFF;
+    --text-secondary: #B0B0B0;
+    --glass-bg: rgba(30, 30, 30, 0.8);
+    --glass-border: rgba(255, 255, 255, 0.1);
+    --shadow-soft: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+    --transition-speed: 0.3s;
+}
+
+body {
+    font-family: 'Inter', 'Segoe UI', sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: var(--dark-bg);
+    color: var(--text-primary);
+    overflow-x: hidden;
+}
+
+/* Header */
+header {
+    background: var(--glass-bg);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--glass-border);
+    padding: 1rem 2rem;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: var(--shadow-soft);
+}
+
+.logo {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--secondary-green);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.date-time {
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+}
+
+/* Layout */
+.main-container {
+    display: flex;
+    height: calc(100vh - 70px); /* Adjust based on header height */
+    padding: 1rem;
+    gap: 1rem;
+}
+
+/* Vegetable Grid */
+.vegetable-grid {
+    flex: 2;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 1.5rem;
+    overflow-y: auto;
+    padding-right: 0.5rem;
+}
+
+/* Custom Scrollbar */
+.vegetable-grid::-webkit-scrollbar {
+    width: 6px;
+}
+.vegetable-grid::-webkit-scrollbar-thumb {
+    background-color: var(--glass-border);
+    border-radius: 10px;
+}
+
+/* Item Card */
+.veg-card {
+    background: var(--card-bg);
+    border: 1px solid var(--glass-border);
+    border-radius: 16px;
+    padding: 15px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    transition: transform var(--transition-speed), box-shadow var(--transition-speed);
+    position: relative;
+    overflow: hidden;
+}
+
+.veg-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(46, 125, 50, 0.2);
+    border-color: var(--secondary-green);
+}
+
+.veg-img {
+    width: 100%;
+    height: 120px;
+    object-fit: cover;
+    border-radius: 12px;
+    margin-bottom: 15px;
+}
+
+.veg-name {
+    font-weight: 600;
+    margin-bottom: 5px;
+}
+
+.veg-price {
+    color: var(--accent-green);
+    font-weight: 700;
+    margin-bottom: 10px;
+}
+
+.add-btn {
+    background: var(--primary-green);
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 20px;
+    cursor: pointer;
+    font-weight: 600;
+    width: 100%;
+    transition: background var(--transition-speed);
+}
+
+.add-btn:hover {
+    background: var(--secondary-green);
+}
+
+/* Billing Panel */
+.billing-panel {
+    flex: 1;
+    background: var(--card-bg);
+    border-radius: 16px;
+    border: 1px solid var(--glass-border);
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+}
+
+.panel-header {
+    font-size: 1.2rem;
+    font-weight: 700;
+    margin-bottom: 1.5rem;
+    border-bottom: 1px solid var(--glass-border);
+    padding-bottom: 1rem;
+}
+
+.order-list {
+    flex-grow: 1;
+    overflow-y: auto;
+    margin-bottom: 1rem;
+}
+
+.order-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.8rem 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.item-name {
+    font-size: 0.95rem;
+}
+
+.item-calc {
+    color: var(--text-secondary);
+    font-size: 0.85rem;
+}
+
+.total-section {
+    padding-top: 1rem;
+    border-top: 1px solid var(--glass-border);
+}
+
+.total-row {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 0.5rem;
+}
+
+.grand-total {
+    font-size: 1.3rem;
+    font-weight: 800;
+    color: var(--secondary-green);
+    margin-top: 0.5rem;
+}
+
+.checkout-btn {
+    background: linear-gradient(135deg, var(--secondary-green), var(--primary-green));
+    color: white;
+    border: none;
+    padding: 15px;
+    border-radius: 12px;
+    font-size: 1rem;
+    font-weight: 700;
+    width: 100%;
+    cursor: pointer;
+    margin-top: 1rem;
+    box-shadow: 0 4px 15px rgba(46, 125, 50, 0.4);
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.checkout-btn:hover {
+    transform: scale(1.02);
+    box-shadow: 0 6px 20px rgba(46, 125, 50, 0.6);
+}
