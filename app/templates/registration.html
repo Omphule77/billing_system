@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registration - Saniro Billing System</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        .login-bg {
+            background-color: #f3f4f6;
+            background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%236b7280' fill-opacity='0.1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+        }
+    </style>
+</head>
+
+<body class="login-bg min-h-screen flex items-center justify-center font-sans py-10">
+
+    <div class="w-full max-w-lg p-6">
+        <div class="bg-white rounded-lg shadow-xl overflow-hidden border border-gray-200">
+            <!-- Header -->
+            <div class="bg-[#234b9b] p-6 text-center">
+                <div class="inline-block bg-white p-2 rounded px-4 md:mb-2">
+                    <span class="text-[#234b9b] font-black text-2xl tracking-tighter">SANIRO</span>
+                </div>
+                <h2 class="text-white text-lg font-medium mt-2">Create Account</h2>
+                <p class="text-blue-200 text-sm">Join us to manage your billing efficiently</p>
+            </div>
+
+            <!-- Form -->
+            <div class="p-8">
+                <form action="#" method="POST">
+
+                    <!-- Name -->
+                    <div class="mb-5">
+                        <label for="name"
+                            class="block text-sm font-bold text-gray-700 mb-2 uppercase text-[11px] tracking-wider">Full
+                            Name</label>
+                        <div class="relative">
+                            <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-400">
+                                <i class="fas fa-user"></i>
+                            </span>
+                            <input type="text" id="name" name="name" required placeholder="John Doe"
+                                class="w-full pl-10 pr-3 py-2 border rounded text-sm focus:outline-none focus:ring-2 focus:ring-[#234b9b] focus:border-transparent transition-shadow">
+                        </div>
+                    </div>
+
+                    <!-- Grid for Mobile and Email -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-5">
+                        <div>
+                            <label for="mobile"
+                                class="block text-sm font-bold text-gray-700 mb-2 uppercase text-[11px] tracking-wider">Mobile
+                                Number</label>
+                            <div class="relative">
+                                <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-400">
+                                    <i class="fas fa-phone-alt"></i>
+                                </span>
+                                <input type="tel" id="mobile" name="mobile" required placeholder="+91 9999000000"
+                                    class="w-full pl-10 pr-3 py-2 border rounded text-sm focus:outline-none focus:ring-2 focus:ring-[#234b9b] focus:border-transparent transition-shadow">
+                            </div>
+                        </div>
+                        <div>
+                            <label for="email"
+                                class="block text-sm font-bold text-gray-700 mb-2 uppercase text-[11px] tracking-wider">Email
+                                Address</label>
+                            <div class="relative">
+                                <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-400">
+                                    <i class="fas fa-envelope"></i>
+                                </span>
+                                <input type="email" id="email" name="email" required placeholder="name@company.com"
+                                    class="w-full pl-10 pr-3 py-2 border rounded text-sm focus:outline-none focus:ring-2 focus:ring-[#234b9b] focus:border-transparent transition-shadow">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Address -->
+                    <div class="mb-5">
+                        <label for="address"
+                            class="block text-sm font-bold text-gray-700 mb-2 uppercase text-[11px] tracking-wider">Address</label>
+                        <div class="relative">
+                            <span class="absolute top-3 left-0 pl-3 flex items-start text-gray-400">
+                                <i class="fas fa-map-marker-alt"></i>
+                            </span>
+                            <textarea id="address" name="address" rows="2" required
+                                placeholder="123 Street, City, Country"
+                                class="w-full pl-10 pr-3 py-2 border rounded text-sm focus:outline-none focus:ring-2 focus:ring-[#234b9b] focus:border-transparent transition-shadow resize-none"></textarea>
+                        </div>
+                    </div>
+
+                    <!-- Password -->
+                    <div class="mb-6">
+                        <label for="password"
+                            class="block text-sm font-bold text-gray-700 mb-2 uppercase text-[11px] tracking-wider">Password</label>
+                        <div class="relative">
+                            <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-400">
+                                <i class="fas fa-lock"></i>
+                            </span>
+                            <input type="password" id="password" name="password" required placeholder="••••••••"
+                                class="w-full pl-10 pr-3 py-2 border rounded text-sm focus:outline-none focus:ring-2 focus:ring-[#234b9b] focus:border-transparent transition-shadow">
+                        </div>
+                        <p class="text-xs text-gray-500 mt-1">Must be at least 8 characters</p>
+                    </div>
+
+                    <button type="submit"
+                        class="w-full bg-[#234b9b] hover:bg-blue-800 text-white font-bold py-2.5 rounded transition duration-200 shadow-md flex justify-center items-center gap-2">
+                        <span>Register Account</span>
+                        <i class="fas fa-user-plus text-sm"></i>
+                    </button>
+                </form>
+
+                <div class="mt-6 text-center border-t pt-4">
+                    <p class="text-sm text-gray-600">
+                        Already have an account?
+                        <a href="{{ url_for('main.login') }}" class="font-bold text-[#234b9b] hover:underline">Sign
+                            in</a>
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <p class="text-center text-xs text-gray-400 mt-4 uppercase tracking-widest">
+            &copy; 2024 Saniro Technologies
+        </p>
+    </div>
+
+</body>
+
+</html>

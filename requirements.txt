@@ -8,3 +8,4 @@ scikit-learn
 joblib
 matplotlib
 seaborn
+mysql-connector-python
