@@ -48,17 +48,72 @@ def create_bill(id):
         query = "select * from registration where id=%s"
         cursor.execute(query, (id,))
         user = cursor.fetchone()
+
+        q="select * from hotel"
+        cursor.execute(q)
+        hotel=cursor.fetchall()
         
         cursor.close()
         db.close()
-        return render_template('create_bill.html', user=user)
+        return render_template('create_bill.html', user=user,hotel=hotel)
     except Exception as e:
         print(f"Error in create_bill: {e}")
         return render_template('create_bill.html')
 
-@bp.route('/add_item')
-def add_item():
-    return render_template('add_item.html')
+@bp.route('/add_item/<int:id>/<int:hotel_id>')
+def add_item(id,hotel_id):
+    try:
+        db=get_db_connection()
+        cursor=db.cursor(dictionary=True)
+
+        query="select * from registration where id=%s"
+        cursor.execute(query,(id,))
+        user=cursor.fetchone()
+        cursor.close()
+        db.close()
+        return render_template('add_item.html',user=user)
+    except Exception as e:
+        print(f"Error in add_item: {e}")
+        return redirect(url_for('main.create_bill', id=id))
+
+@bp.route('/add_hotel/<int:id>',methods=['GET','POST'])
+def add_hotel(id):
+    if request.method=='POST':
+        name=request.form['owner_name']
+        mobile=request.form['mobile']
+        email=request.form['email']
+        hotel_name=request.form['hotel_name']
+        address=request.form['address']
+        
+        try:
+            db = get_db_connection()
+            cursor = db.cursor(dictionary=True)
+            query = "insert into hotel(owner_name,mobile,email,hotel_name,address) values(%s,%s,%s,%s,%s)"
+            cursor.execute(query,(name,mobile,email,hotel_name,address))
+            db.commit()
+            cursor.close()
+            db.close()
+            flash('Hotel added successfully!', 'success')
+            return redirect(url_for('main.create_bill', id=id))
+        except Exception as e:
+            print(f"Error in add_hotel: {e}")
+            flash('Failed to add hotel!', 'danger')
+            return redirect(url_for('main.create_bill', id=id))
+    else:
+        try:
+            db=get_db_connection()
+            cursor=db.cursor(dictionary=True)
+
+            query="select * from registration where id=%s"
+            cursor.execute(query,(id,))
+            user=cursor.fetchone()
+            cursor.close()
+            db.close()
+            return render_template('add_hotel.html',user=user)
+        except Exception as e:
+            print(f"Error in add_hotel: {e}")
+            return redirect(url_for('main.create_bill', id=id))
+
 
 @bp.route('/login', methods=['GET', 'POST'])
 def login():

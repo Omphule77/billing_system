@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Hotel - Saniro Billing System</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        .sidebar-scroll::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        .sidebar-scroll::-webkit-scrollbar-thumb {
+            background: #3b82f6;
+            border-radius: 10px;
+        }
+    </style>
+</head>
+
+<body class="bg-gray-100 font-sans overflow-x-hidden">
+
+    <div class="flex min-h-screen relative">
+
+        <!-- Sidebar -->
+        <aside id="sidebar"
+            class="fixed inset-y-0 left-0 z-50 w-64 bg-[#234b9b] text-white transform -translate-x-full transition-transform duration-300 ease-in-out md:relative md:translate-x-0 flex flex-col shadow-xl">
+
+            <div class="p-4 flex items-center justify-between border-b border-blue-800">
+                <div class="bg-white p-1 rounded px-3">
+                    <span class="text-[#234b9b] font-black text-xl tracking-tighter">SANIRO</span>
+                </div>
+                <button onclick="toggleSidebar()" class="md:hidden text-white"><i class="fas fa-times"></i></button>
+            </div>
+
+            <div class="p-6 text-center border-b border-blue-800 bg-[#1e3e82]">
+                <div
+                    class="w-16 h-16 bg-gray-200 rounded-full mx-auto mb-2 overflow-hidden border-2 border-white shadow-md">
+                    <img src="https://ui-avatars.com/api/?name={{ user['name'] }}&background=random" alt="User">
+                </div>
+                <p class="text-[10px] uppercase tracking-widest text-blue-300">Welcome,</p>
+                <p class="font-bold text-sm">{{ user['name'] }}</p>
+            </div>
+
+            <nav class="flex-grow p-4 space-y-1 sidebar-scroll overflow-y-auto">
+                <a href="{{ url_for('main.create_bill', id=user['id']) }}"
+                    class="flex items-center gap-3 p-3 hover:bg-blue-700 rounded transition text-sm text-white">
+                    <i class="fas fa-arrow-left w-5"></i> Back to Bills
+                </a>
+                <div class="mt-4 px-3 text-xs uppercase text-blue-300 font-bold tracking-wider">Registration</div>
+                <a href="#"
+                    class="flex items-center gap-3 p-3 bg-blue-900 rounded transition text-sm shadow-inner mt-1">
+                    <i class="fas fa-hotel w-5"></i> Add New Hotel
+                </a>
+            </nav>
+        </aside>
+
+        <main class="flex-grow flex flex-col w-full min-w-0">
+
+            <!-- Header -->
+            <header class="h-16 bg-white shadow-md flex items-center justify-between px-4 sticky top-0 z-40">
+                <div class="flex items-center gap-4">
+                    <button onclick="toggleSidebar()" class="text-blue-800 md:hidden text-xl"><i
+                            class="fas fa-bars"></i></button>
+                    <i class="fas fa-outdent text-gray-400 hidden md:block"></i>
+                </div>
+                <div class="flex items-center gap-4">
+                    <div class="flex gap-4 mr-4 border-r pr-4">
+                        <i class="fas fa-envelope text-blue-500 cursor-pointer"></i>
+                        <i class="fas fa-bell text-blue-500 cursor-pointer"></i>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <span class="text-sm font-bold text-gray-700 hidden sm:inline">{{ user['name'] }}</span>
+                        <img src="https://ui-avatars.com/api/?name={{ user['name'] }}" class="rounded-full w-8 h-8">
+                    </div>
+                </div>
+            </header>
+
+            <!-- Main Content -->
+            <div class="p-4 md:p-6">
+                <div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden max-w-4xl mx-auto">
+
+                    <div class="bg-gray-50 p-4 border-b">
+                        <h2 class="text-gray-700 font-bold flex items-center gap-2">
+                            <i class="fas fa-hotel text-blue-500"></i> New Hotel Registration
+                        </h2>
+                    </div>
+
+                    <div class="p-6 md:p-8">
+                        <form action="{{url_for('main.add_hotel',id=user['id'])}}" method="POST">
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <!-- Owner Name -->
+                                <div>
+                                    <label
+                                        class="block text-sm font-bold text-gray-700 mb-2 uppercase text-[11px] tracking-wider">
+                                        Name of Owner <span class="text-red-500">*</span>
+                                    </label>
+                                    <input type="text" name="owner_name" required
+                                        class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all bg-gray-50 focus:bg-white"
+                                        placeholder="Enter owner's full name">
+                                </div>
+
+                                <!-- Mobile Number -->
+                                <div>
+                                    <label
+                                        class="block text-sm font-bold text-gray-700 mb-2 uppercase text-[11px] tracking-wider">
+                                        Mobile Number <span class="text-red-500">*</span>
+                                    </label>
+                                    <input type="tel" name="mobile" required
+                                        class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all bg-gray-50 focus:bg-white"
+                                        placeholder="Enter 10-digit mobile number">
+                                </div>
+
+                                <!-- Email -->
+                                <div>
+                                    <label
+                                        class="block text-sm font-bold text-gray-700 mb-2 uppercase text-[11px] tracking-wider">
+                                        Email Address <span class="text-red-500">*</span>
+                                    </label>
+                                    <input type="email" name="email" required
+                                        class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all bg-gray-50 focus:bg-white"
+                                        placeholder="Enter valid email address">
+                                </div>
+
+                                <!-- Hotel Name -->
+                                <div>
+                                    <label
+                                        class="block text-sm font-bold text-gray-700 mb-2 uppercase text-[11px] tracking-wider">
+                                        Name of Hotel <span class="text-red-500">*</span>
+                                    </label>
+                                    <input type="text" name="hotel_name" required
+                                        class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all bg-gray-50 focus:bg-white"
+                                        placeholder="Enter hotel business name">
+                                </div>
+
+                                <!-- Address (Full Width) -->
+                                <div class="md:col-span-2">
+                                    <label
+                                        class="block text-sm font-bold text-gray-700 mb-2 uppercase text-[11px] tracking-wider">
+                                        Address <span class="text-red-500">*</span>
+                                    </label>
+                                    <textarea name="address" rows="3" required
+                                        class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all bg-gray-50 focus:bg-white resize-none"
+                                        placeholder="Enter complete hotel address"></textarea>
+                                </div>
+                            </div>
+
+                            <div class="mt-8 flex justify-end gap-3">
+                                <a href="{{ url_for('main.create_bill', id=user['id']) }}"
+                                    class="px-6 py-3 rounded-lg text-gray-600 font-bold hover:bg-gray-100 transition">
+                                    Cancel
+                                </a>
+                                <button type="submit"
+                                    class="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded-lg font-bold shadow-lg transition transform hover:-translate-y-0.5">
+                                    Register Hotel
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <p class="text-center text-xs text-gray-400 mt-8 uppercase tracking-widest">
+                    &copy; 2024 Saniro Technologies
+                </p>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            sidebar.classList.toggle('-translate-x-full');
+        }
+    </script>
+</body>
+
+</html>

@@ -119,85 +119,36 @@
                                 <thead class="bg-blue-400 text-white">
                                     <tr>
                                         <th class="p-3 border-r border-blue-300">Sno</th>
-                                        <th class="p-3 border-r border-blue-300 whitespace-nowrap">Vendor Details</th>
-                                        <th class="p-3 border-r border-blue-300">Bill</th>
-                                        <th class="p-3 border-r border-blue-300 whitespace-nowrap">Bill-Date</th>
+                                        <th class="p-3 border-r border-blue-300 whitespace-nowrap">Vendor Name</th>
+                                        <th class="p-3 border-r border-blue-300 whitespace-nowrap">Vendor Mob Number
+                                        </th>
+                                        <th class="p-3 border-r border-blue-300 whitespace-nowrap">Vendor Email id</th>
+                                        <th class="p-3 border-r border-blue-300 whitespace-nowrap">Vendor Hotel Name
+                                        </th>
+                                        <th class="p-3 border-r border-blue-300 whitespace-nowrap">Vendor Hotel Address
+                                        </th>
                                         <th class="p-3">Create Bill</th>
                                     </tr>
                                 </thead>
                                 <tbody class="divide-y divide-gray-200">
+                                    {%for h in hotel %}
                                     <tr class="hover:bg-blue-50 transition border-b">
-                                        <td class="p-4">1</td>
-                                        <td class="p-4 text-blue-900 font-semibold">WINGSTUND TRADING</td>
-                                        <td class="p-4">INV-001</td>
-                                        <td class="p-4">10 Jan 2024</td>
+
+                                        <td class="p-4">{{h.id}}</td>
+                                        <td class="p-4 text-blue-900 font-semibold">{{h.owner_name}}</td>
+                                        <td class="p-4">{{h.mobile}}</td>
+                                        <td class="p-4">{{h.email}}</td>
+                                        <td class="p-4">{{h.hotel_name}}</td>
+                                        <td class="p-4">{{h.address}}</td>
                                         <td class="p-4">
-                                            <a href="{{ url_for('main.add_item') }}"
+                                            <a href="{{ url_for('main.add_item',id=user['id'],hotel_id=h.id) }}"
                                                 class="bg-blue-100 hover:bg-blue-200 text-blue-600 rounded-full w-8 h-8 flex items-center justify-center transition">
                                                 <i class="fas fa-plus"></i>
                                             </a>
                                         </td>
+
                                     </tr>
-                                    <tr class="bg-gray-50 hover:bg-blue-50 transition border-b">
-                                        <td class="p-4">2</td>
-                                        <td class="p-4 text-blue-900 font-semibold">FARM FRESH LTD</td>
-                                        <td class="p-4">INV-002</td>
-                                        <td class="p-4">11 Jan 2024</td>
-                                        <td class="p-4">
-                                            <a href="{{ url_for('main.add_item') }}"
-                                                class="bg-blue-100 hover:bg-blue-200 text-blue-600 rounded-full w-8 h-8 flex items-center justify-center transition">
-                                                <i class="fas fa-plus"></i>
-                                            </a>
-                                        </td>
-                                    </tr>
-                                    <tr class="hover:bg-blue-50 transition border-b">
-                                        <td class="p-4">3</td>
-                                        <td class="p-4 text-blue-900 font-semibold">TECH WORLD INC</td>
-                                        <td class="p-4">INV-003</td>
-                                        <td class="p-4">12 Jan 2024</td>
-                                        <td class="p-4">
-                                            <a href="{{ url_for('main.add_item') }}"
-                                                class="bg-blue-100 hover:bg-blue-200 text-blue-600 rounded-full w-8 h-8 flex items-center justify-center transition">
-                                                <i class="fas fa-plus"></i>
-                                            </a>
-                                        </td>
-                                    </tr>
-                                    <tr class="bg-gray-50 hover:bg-blue-50 transition border-b">
-                                        <td class="p-4">4</td>
-                                        <td class="p-4 text-blue-900 font-semibold">DAIRY BEST CO</td>
-                                        <td class="p-4">INV-004</td>
-                                        <td class="p-4">12 Jan 2024</td>
-                                        <td class="p-4">
-                                            <a href="{{ url_for('main.add_item') }}"
-                                                class="bg-blue-100 hover:bg-blue-200 text-blue-600 rounded-full w-8 h-8 flex items-center justify-center transition">
-                                                <i class="fas fa-plus"></i>
-                                            </a>
-                                        </td>
-                                    </tr>
-                                    <tr class="hover:bg-blue-50 transition border-b">
-                                        <td class="p-4">5</td>
-                                        <td class="p-4 text-blue-900 font-semibold">OFFICE DEPOT</td>
-                                        <td class="p-4">INV-005</td>
-                                        <td class="p-4">13 Jan 2024</td>
-                                        <td class="p-4">
-                                            <a href="{{ url_for('main.add_item') }}"
-                                                class="bg-blue-100 hover:bg-blue-200 text-blue-600 rounded-full w-8 h-8 flex items-center justify-center transition">
-                                                <i class="fas fa-plus"></i>
-                                            </a>
-                                        </td>
-                                    </tr>
-                                    <tr class="bg-gray-50 hover:bg-blue-50 transition">
-                                        <td class="p-4">6</td>
-                                        <td class="p-4 text-blue-900 font-semibold">FRESH SIPS LTD</td>
-                                        <td class="p-4">INV-006</td>
-                                        <td class="p-4">14 Jan 2024</td>
-                                        <td class="p-4">
-                                            <a href="{{ url_for('main.add_item') }}"
-                                                class="bg-blue-100 hover:bg-blue-200 text-blue-600 rounded-full w-8 h-8 flex items-center justify-center transition">
-                                                <i class="fas fa-plus"></i>
-                                            </a>
-                                        </td>
-                                    </tr>
+                                    {%endfor%}
                                 </tbody>
                             </table>
                         </div>
@@ -213,7 +164,7 @@
     </div>
 
     <!-- Floating Action Button -->
-    <a href="{{ url_for('main.dashboard', id=user['id']) }}"
+    <a href="{{ url_for('main.add_hotel', id=user['id']) }}"
         class="fixed bottom-8 right-8 bg-blue-600 text-white p-4 rounded-full shadow-lg hover:bg-blue-700 transition transform hover:scale-110 flex items-center justify-center w-14 h-14 z-50">
         <i class="fas fa-plus text-2xl"></i>
     </a>
