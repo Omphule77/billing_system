@@ -37,14 +37,14 @@
             <div class="p-6 text-center border-b border-blue-800 bg-[#1e3e82]">
                 <div
                     class="w-16 h-16 bg-gray-200 rounded-full mx-auto mb-2 overflow-hidden border-2 border-white shadow-md">
-                    <img src="https://ui-avatars.com/api/?name=Ravi+Sharma&background=random" alt="User">
+                    <img src="https://ui-avatars.com/api/?name={{user['name']}}&background=random" alt="User">
                 </div>
                 <p class="text-[10px] uppercase tracking-widest text-blue-300">Welcome,</p>
-                <p class="font-bold text-sm">Ravi Sharma</p>
+                <p class="font-bold text-sm">{{user['name']}}</p>
             </div>
 
             <nav class="flex-grow p-4 space-y-1 sidebar-scroll overflow-y-auto">
-                <a href="create_bill.html"
+                <a href="{{url_for('main.create_bill', id=user['id'])}}"
                     class="flex items-center gap-3 p-3 hover:bg-blue-700 rounded transition text-sm"><i
                         class="fas fa-th-large w-5"></i> Create New Bill</a>
                 <a href="#" class="flex items-center gap-3 p-3 hover:bg-blue-700 rounded transition text-sm"><i

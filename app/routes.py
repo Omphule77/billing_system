@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, request, redirect, url_for, flash, current_app
+from flask import Blueprint, render_template, request, redirect, url_for, flash, current_app, session
 import mysql.connector
 
 bp = Blueprint('main', __name__)
@@ -17,24 +17,80 @@ def get_db_connection():
 def index():
     return render_template('base.html')
 
-@bp.route('/dashboard')
-def dashboard():
-    return render_template('dashboard.html')
+@bp.route('/dashboard/<int:id>')
+def dashboard(id):
+    try:
+        db=get_db_connection()
+        cursor=db.cursor(dictionary=True)
+
+        query="select * from registration where id=%s"
+        cursor.execute(query,(id,))
+        user=cursor.fetchone()
+        cursor.close()
+        db.close()
+        print(f"success user found: {user}")
+        return render_template('dashboard.html',user=user)
+
+    except Exception as e:
+        print(f"Error found: {e}")
+        return render_template('dashboard.html')
 
 @bp.route('/bill')
 def bill():
     return render_template('bill.html')
 
-@bp.route('/create_bill')
-def create_bill():
-    return render_template('create_bill.html')
+@bp.route('/create_bill/<int:id>')
+def create_bill(id):
+    try:
+        db = get_db_connection()
+        cursor = db.cursor(dictionary=True)
+        
+        query = "select * from registration where id=%s"
+        cursor.execute(query, (id,))
+        user = cursor.fetchone()
+        
+        cursor.close()
+        db.close()
+        return render_template('create_bill.html', user=user)
+    except Exception as e:
+        print(f"Error in create_bill: {e}")
+        return render_template('create_bill.html')
 
 @bp.route('/add_item')
 def add_item():
     return render_template('add_item.html')
 
-@bp.route('/login')
+@bp.route('/login', methods=['GET', 'POST'])
 def login():
+    if request.method == 'POST':
+        email = request.form['email']
+        password = request.form['password']
+        
+        try:
+            db = get_db_connection()
+            cursor = db.cursor(dictionary=True)
+            
+            # Query to fetch user by email
+            query = "SELECT * FROM registration WHERE email = %s"
+            cursor.execute(query, (email,))
+            user = cursor.fetchone()
+            
+            cursor.close()
+            db.close()
+            
+            if user:
+                if user['password'] == password:
+                    flash('Login successful!', 'success')
+                    return redirect(url_for('main.dashboard',id=user['id']))
+                else:
+                     flash('Invalid email or password', 'danger')
+            else:
+                flash('Invalid email or password', 'danger')
+                
+        except Exception as e:
+            print(f"DEBUG: Error during login: {e}")
+            flash(f'An error occurred: {e}', 'danger')
+
     return render_template('login.html')
 
 @bp.route('/registration', methods=['GET', 'POST'])

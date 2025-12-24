@@ -37,10 +37,10 @@
             <div class="p-6 text-center border-b border-blue-800 bg-[#1e3e82]">
                 <div
                     class="w-16 h-16 bg-gray-200 rounded-full mx-auto mb-2 overflow-hidden border-2 border-white shadow-md">
-                    <img src="https://ui-avatars.com/api/?name=Ravi+Sharma&background=random" alt="User">
+                    <img src="https://ui-avatars.com/api/?name={{ user['name'] }}&background=random" alt="User">
                 </div>
                 <p class="text-[10px] uppercase tracking-widest text-blue-300">Welcome,</p>
-                <p class="font-bold text-sm">Ravi Sharma</p>
+                <p class="font-bold text-sm">{{ user['name'] }}</p>
             </div>
 
             <nav class="flex-grow p-4 space-y-1 sidebar-scroll overflow-y-auto">
@@ -213,7 +213,7 @@
     </div>
 
     <!-- Floating Action Button -->
-    <a href="{{ url_for('main.dashboard') }}"
+    <a href="{{ url_for('main.dashboard', id=user['id']) }}"
         class="fixed bottom-8 right-8 bg-blue-600 text-white p-4 rounded-full shadow-lg hover:bg-blue-700 transition transform hover:scale-110 flex items-center justify-center w-14 h-14 z-50">
         <i class="fas fa-plus text-2xl"></i>
     </a>
