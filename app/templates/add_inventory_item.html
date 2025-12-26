@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Inventory Item</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        /* Custom scrollbar for sidebar */
+        .sidebar-scroll::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        .sidebar-scroll::-webkit-scrollbar-thumb {
+            background: #3b82f6;
+            border-radius: 10px;
+        }
+    </style>
+</head>
+
+<body class="bg-gray-100 font-sans overflow-x-hidden">
+
+    <div class="flex min-h-screen relative">
+
+        <aside id="sidebar"
+            class="fixed inset-y-0 left-0 z-50 w-64 bg-[#234b9b] text-white transform -translate-x-full transition-transform duration-300 ease-in-out md:relative md:translate-x-0 flex flex-col shadow-xl">
+
+            <div class="p-4 flex items-center justify-between border-b border-blue-800">
+                <div class="bg-white p-1 rounded px-3">
+                    <span class="text-[#234b9b] font-black text-xl tracking-tighter">SANIRO</span>
+                </div>
+                <button onclick="toggleSidebar()" class="md:hidden text-white"><i class="fas fa-times"></i></button>
+            </div>
+
+            <div class="p-6 text-center border-b border-blue-800 bg-[#1e3e82]">
+                <div
+                    class="w-16 h-16 bg-gray-200 rounded-full mx-auto mb-2 overflow-hidden border-2 border-white shadow-md">
+                    <img src="https://ui-avatars.com/api/?name={{user['name']}}&background=random" alt="User">
+                </div>
+                <p class="text-[10px] uppercase tracking-widest text-blue-300">Welcome,</p>
+                <p class="font-bold text-sm">{{user['name']}}</p>
+            </div>
+
+            <nav class="flex-grow p-4 space-y-1 sidebar-scroll overflow-y-auto">
+                <a href="{{url_for('main.create_bill', id=user['id'])}}"
+                    class="flex items-center gap-3 p-3 hover:bg-blue-700 rounded transition text-sm"><i
+                        class="fas fa-th-large w-5"></i> Create New Bill</a>
+                <a href="#" class="flex items-center gap-3 p-3 hover:bg-blue-700 rounded transition text-sm"><i
+                        class="fas fa-exchange-alt w-5"></i> Transaction Master</a>
+                <a href="#" class="flex items-center gap-3 p-3 hover:bg-blue-700 rounded transition text-sm"><i
+                        class="fas fa-shopping-cart w-5"></i> Purchase</a>
+                <a href="#" class="flex items-center gap-3 p-3 hover:bg-blue-700 rounded transition text-sm"><i
+                        class="fas fa-chart-line w-5"></i> Sales</a>
+                <a href="{{url_for('main.inventory', id=user['id'])}}"
+                    class="flex items-center gap-3 p-3 bg-blue-900 rounded transition text-sm shadow-inner"><i
+                        class="fas fa-warehouse w-5"></i> Inventory</a>
+                <a href="#" class="flex items-center gap-3 p-3 hover:bg-blue-700 rounded transition text-sm"><i
+                        class="fas fa-file-invoice w-5"></i> Reports</a>
+                <a href="#" class="flex items-center gap-3 p-3 hover:bg-blue-700 rounded transition text-sm"><i
+                        class="fas fa-user-friends w-5"></i> CRM</a>
+            </nav>
+        </aside>
+
+        <main class="flex-grow flex flex-col w-full min-w-0">
+
+            <header class="h-16 bg-white shadow-md flex items-center justify-between px-4 sticky top-0 z-40">
+                <div class="flex items-center gap-4">
+                    <button onclick="toggleSidebar()" class="text-blue-800 md:hidden text-xl"><i
+                            class="fas fa-bars"></i></button>
+                    <i class="fas fa-outdent text-gray-400 hidden md:block"></i>
+                </div>
+                <div class="flex items-center gap-4">
+                    <div class="flex gap-4 mr-4 border-r pr-4">
+                        <i class="fas fa-envelope text-blue-500 cursor-pointer"></i>
+                        <i class="fas fa-bell text-blue-500 cursor-pointer"></i>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <span class="text-sm font-bold text-gray-700 hidden sm:inline">{{user['name']}}</span>
+                        <img src="https://ui-avatars.com/api/?name={{user['name']}}" class="rounded-full w-8 h-8">
+                    </div>
+                </div>
+            </header>
+
+            <div class="p-4 md:p-6">
+                <div class="max-w-4xl mx-auto bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+
+                    <div class="bg-gray-50 p-4 border-b flex items-center justify-between">
+                        <h2 class="text-gray-700 font-bold flex items-center gap-2">
+                            <i class="fas fa-plus-circle text-blue-500"></i> Add New Inventory Item
+                        </h2>
+                        <a href="{{url_for('main.inventory', id=user['id'])}}"
+                            class="text-gray-500 hover:text-gray-700"><i class="fas fa-times"></i></a>
+                    </div>
+
+                    <div class="p-6 md:p-8">
+                        <form action="{{url_for('main.add_inventory_item', id=user['id'])}}" method="POST">
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div class="col-span-1 md:col-span-2">
+                                    <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Item
+                                        Name</label>
+                                    <input type="text" name="item_name" placeholder="E.g., Fresh Tomatoes" required
+                                        class="w-full border rounded px-3 py-2.5 text-sm focus:ring-2 focus:ring-blue-500 outline-none transition bg-gray-50 focus:bg-white">
+                                </div>
+
+                                <div>
+                                    <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Category</label>
+                                    <select name="category" required
+                                        class="w-full border rounded px-3 py-2.5 text-sm focus:ring-2 focus:ring-blue-500 outline-none transition bg-gray-50 focus:bg-white">
+                                        <option value="" disabled selected>Select Category</option>
+                                        <option value="Leafy Greens">Leafy Greens</option>
+                                        <option value="Root Vegetables">Root Vegetables</option>
+                                        <option value="Fruits">Fruits</option>
+                                        <option value="Others">Others</option>
+                                    </select>
+                                </div>
+
+                                <div>
+                                    <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Price per
+                                        Unit</label>
+                                    <div class="relative">
+                                        <span
+                                            class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500">₹</span>
+                                        <input type="text" step="0.01" name="price" placeholder="0.00" required
+                                            class="w-full border rounded pl-7 pr-3 py-2.5 text-sm focus:ring-2 focus:ring-blue-500 outline-none transition bg-gray-50 focus:bg-white">
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Unit</label>
+                                    <select name="unit" required
+                                        class="w-full border rounded px-3 py-2.5 text-sm focus:ring-2 focus:ring-blue-500 outline-none transition bg-gray-50 focus:bg-white">
+                                        <option value="kg">Kilogram (kg)</option>
+                                        <option value="g">Gram (g)</option>
+                                        <option value="lb">Pound (lb)</option>
+                                        <option value="bunch">Bunch</option>
+                                        <option value="pcs">Pieces</option>
+                                    </select>
+                                </div>
+
+                                <div>
+                                    <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Quantity</label>
+                                    <input type="text" name="quantity" placeholder="0.00" required
+                                        class="w-full border rounded px-3 py-2.5 text-sm focus:ring-2 focus:ring-blue-500 outline-none transition bg-gray-50 focus:bg-white">
+                                </div>
+
+                                <div>
+                                    <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Status</label>
+                                    <select name="status" required
+                                        class="w-full border rounded px-3 py-2.5 text-sm focus:ring-2 focus:ring-blue-500 outline-none transition bg-gray-50 focus:bg-white">
+                                        <option value="In Stock">In Stock</option>
+                                        <option value="Low Stock">Low Stock</option>
+                                        <option value="Out of Stock">Out of Stock</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="mt-8 flex justify-end gap-3">
+                                <a href="{{url_for('main.inventory', id=user['id'])}}"
+                                    class="px-6 py-2.5 border border-gray-300 text-gray-700 rounded font-bold hover:bg-gray-50 transition uppercase text-xs tracking-wider">Cancel</a>
+                                <button type="submit"
+                                    class="px-6 py-2.5 bg-blue-600 text-white rounded font-bold hover:bg-blue-700 transition shadow-md uppercase text-xs tracking-wider">Add
+                                    Item</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <footer
+                class="mt-auto p-6 text-center text-[11px] text-gray-400 uppercase tracking-widest border-t bg-white">
+                Copyright © 2024 | Designed by <span class="text-blue-500 font-bold">Saniro Technologies Pvt Ltd</span>
+            </footer>
+        </main>
+    </div>
+
+    <script>
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            sidebar.classList.toggle('-translate-x-full');
+        }
+    </script>
+</body>
+
+</html>

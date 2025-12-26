@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Responsive Billing Dashboard</title>
+    <title>Vegetable Inventory Management</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
@@ -49,12 +49,12 @@
                         class="fas fa-th-large w-5"></i> Create New Bill</a>
                 <a href="#" class="flex items-center gap-3 p-3 hover:bg-blue-700 rounded transition text-sm"><i
                         class="fas fa-exchange-alt w-5"></i> Transaction Master</a>
-                <a href="#" class="flex items-center gap-3 p-3 bg-blue-900 rounded transition text-sm shadow-inner"><i
+                <a href="#" class="flex items-center gap-3 p-3 hover:bg-blue-700 rounded transition text-sm"><i
                         class="fas fa-shopping-cart w-5"></i> Purchase</a>
                 <a href="#" class="flex items-center gap-3 p-3 hover:bg-blue-700 rounded transition text-sm"><i
                         class="fas fa-chart-line w-5"></i> Sales</a>
                 <a href="{{url_for('main.inventory', id=user['id'])}}"
-                    class="flex items-center gap-3 p-3 hover:bg-blue-700 rounded transition text-sm"><i
+                    class="flex items-center gap-3 p-3 bg-blue-900 rounded transition text-sm shadow-inner"><i
                         class="fas fa-warehouse w-5"></i> Inventory</a>
                 <a href="#" class="flex items-center gap-3 p-3 hover:bg-blue-700 rounded transition text-sm"><i
                         class="fas fa-file-invoice w-5"></i> Reports</a>
@@ -77,8 +77,8 @@
                         <i class="fas fa-bell text-blue-500 cursor-pointer"></i>
                     </div>
                     <div class="flex items-center gap-2">
-                        <span class="text-sm font-bold text-gray-700 hidden sm:inline">John Doe</span>
-                        <img src="https://ui-avatars.com/api/?name=John+Doe" class="rounded-full w-8 h-8">
+                        <span class="text-sm font-bold text-gray-700 hidden sm:inline">{{user['name']}}</span>
+                        <img src="https://ui-avatars.com/api/?name={{user['name']}}" class="rounded-full w-8 h-8">
                     </div>
                 </div>
             </header>
@@ -88,113 +88,90 @@
 
                     <div class="bg-gray-50 p-4 border-b flex flex-wrap justify-between items-center gap-4">
                         <h2 class="text-gray-700 font-bold flex items-center gap-2">
-                            <i class="fas fa-file-alt text-blue-500"></i> Purchase Items
+                            <i class="fas fa-warehouse text-blue-500"></i> Vegetable Inventory
                         </h2>
                         <div class="flex gap-2">
-                            <button class="p-2 text-red-500 bg-white border rounded hover:bg-red-50"><i
-                                    class="fas fa-file-pdf"></i></button>
-                            <button class="p-2 text-green-600 bg-white border rounded hover:bg-green-50"><i
-                                    class="fas fa-file-excel"></i></button>
-                            <button
-                                class="bg-blue-500 text-white px-4 py-1.5 rounded text-sm hover:bg-blue-600 font-bold">RELOAD</button>
+                            <a href="{{url_for('main.add_inventory_item', id=user['id'])}}"
+                                class="bg-green-600 hover:bg-green-700 text-white px-4 py-1.5 rounded text-sm font-bold flex items-center"><i
+                                    class="fas fa-plus mr-2"></i> Add Item</a>
                         </div>
                     </div>
 
                     <div class="p-4 md:p-6">
-                        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+                            <div>
+                                <label class="text-[11px] font-bold text-gray-500 uppercase">Search by Item</label>
+                                <input type="text" placeholder="Item Name"
+                                    class="w-full mt-1 border rounded px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none">
+                            </div>
                             <div>
                                 <label class="text-[11px] font-bold text-gray-500 uppercase">Category</label>
                                 <select
                                     class="w-full mt-1 border rounded px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none">
-                                    <option>Search By Category</option>
+                                    <option>All Categories</option>
+                                    <option>Leafy Greens</option>
+                                    <option>Root Vegetables</option>
+                                    <option>Fruits</option>
                                 </select>
                             </div>
                             <div>
-                                <label class="text-[11px] font-bold text-gray-500 uppercase">Sub-Category</label>
+                                <label class="text-[11px] font-bold text-gray-500 uppercase">Stock Status</label>
                                 <select
                                     class="w-full mt-1 border rounded px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none">
-                                    <option>Search By Sub Category</option>
+                                    <option>All</option>
+                                    <option>In Stock</option>
+                                    <option>Low Stock</option>
+                                    <option>Out of Stock</option>
                                 </select>
                             </div>
-                            <div>
-                                <label class="text-[11px] font-bold text-gray-500 uppercase">Item</label>
-                                <select
-                                    class="w-full mt-1 border rounded px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none">
-                                    <option>Search By Item</option>
-                                </select>
-                            </div>
-                            <div>
-                                <label class="text-[11px] font-bold text-gray-500 uppercase">Status</label>
-                                <select
-                                    class="w-full mt-1 border rounded px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none">
-                                    <option>Search By Status</option>
-                                </select>
-                            </div>
-                            <div>
-                                <label class="text-[11px] font-bold text-gray-500 uppercase">Supplier</label>
-                                <select
-                                    class="w-full mt-1 border rounded px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none">
-                                    <option>Search By Supplier</option>
-                                </select>
-                            </div>
-                            <div>
-                                <label class="text-[11px] font-bold text-gray-500 uppercase">Invoice Number</label>
-                                <input type="text" placeholder="Enter Invoice No"
-                                    class="w-full mt-1 border rounded px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none">
-                            </div>
-
-                            <div class="sm:col-span-2 lg:col-span-2">
-                                <label class="text-[11px] font-bold text-gray-500 uppercase">Date Range & Search</label>
-                                <div class="flex flex-col sm:flex-row gap-2 mt-1">
-                                    <div class="flex flex-grow gap-2">
-                                        <input type="date"
-                                            class="w-full border rounded px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none">
-                                        <input type="date"
-                                            class="w-full border rounded px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none">
-                                    </div>
-                                    <button
-                                        class="w-full sm:w-auto bg-blue-600 hover:bg-blue-700 text-white px-8 py-2 rounded font-bold transition shadow-md">
-                                        SEARCH
-                                    </button>
-                                </div>
+                            <div class="flex items-end">
+                                <button
+                                    class="w-full bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded font-bold transition shadow-md">
+                                    SEARCH
+                                </button>
                             </div>
                         </div>
 
-                        <div class="mt-8 overflow-x-auto rounded-lg border border-gray-200">
+                        <div class="overflow-x-auto rounded-lg border border-gray-200">
                             <table class="w-full text-sm text-left border-collapse">
                                 <thead class="bg-blue-400 text-white">
                                     <tr>
-                                        <th class="p-3 border-r border-blue-300">Sno</th>
-                                        <th class="p-3 border-r border-blue-300 whitespace-nowrap">Category</th>
+                                        <th class="p-3 border-r border-blue-300">ID</th>
+                                        <th class="p-3 border-r border-blue-300 whitespace-nowrap">Image</th>
                                         <th class="p-3 border-r border-blue-300 whitespace-nowrap">Item Name</th>
-                                        <th class="p-3 border-r border-blue-300 whitespace-nowrap">Vendor Details</th>
-                                        <th class="p-3 border-r border-blue-300">Bill</th>
-                                        <th class="p-3 border-r border-blue-300 whitespace-nowrap">Bill-Date</th>
-                                        <th class="p-3 border-r border-blue-300">Qty</th>
-                                        <th class="p-3">Unit</th>
+                                        <th class="p-3 border-r border-blue-300 whitespace-nowrap">Category</th>
+                                        <th class="p-3 border-r border-blue-300 text-right">Price / Unit</th>
+                                        <th class="p-3 border-r border-blue-300 text-right">Quantity</th>
+                                        <th class="p-3 border-r border-blue-300 text-center">Status</th>
+                                        <th class="p-3 text-center">Action</th>
                                     </tr>
                                 </thead>
                                 <tbody class="divide-y divide-gray-200">
+                                    {% for item in items %}
                                     <tr class="hover:bg-blue-50 transition">
-                                        <td class="p-3 border-r">1</td>
-                                        <td class="p-3 border-r font-medium">Oil</td>
-                                        <td class="p-3 border-r italic text-gray-600">Super Exide 15w40 3.5 Ltr</td>
-                                        <td class="p-3 border-r font-bold text-blue-900">WINGSTUND TRADING PVT LTD</td>
-                                        <td class="p-3 border-r">7</td>
-                                        <td class="p-3 border-r">28 May 2018</td>
-                                        <td class="p-3 border-r font-bold">4.000</td>
-                                        <td class="p-3">PICS</td>
+                                        <td class="p-3 border-r">{{item.item_id}}</td>
+                                        <td class="p-3 border-r">
+                                            <div
+                                                class="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center text-green-600">
+                                                <i class="fas fa-carrot"></i>
+                                            </div>
+                                        </td>
+                                        <td class="p-3 border-r font-bold text-gray-700">{{item.item_name}}</td>
+                                        <td class="p-3 border-r text-gray-600">{{item.category}}</td>
+                                        <td class="p-3 border-r text-right">{{item.price}} / {{item.unit}}</td>
+                                        <td class="p-3 border-r text-right font-bold">{{item.quantity}}
+                                            {{item.unit}}</td>
+                                        <td class="p-3 border-r text-center"><span
+                                                class="px-2 py-1 bg-green-100 text-green-700 rounded-full text-xs font-bold">{{item.status}}</span>
+                                        </td>
+                                        <td class="p-3 text-center">
+                                            <button class="text-blue-500 hover:text-blue-700 mx-1"><i
+                                                    class="fas fa-edit"></i></button>
+                                            <button class="text-red-500 hover:text-red-700 mx-1"><i
+                                                    class="fas fa-trash"></i></button>
+                                        </td>
                                     </tr>
-                                    <tr class="bg-gray-50 hover:bg-blue-50 transition">
-                                        <td class="p-3 border-r">2</td>
-                                        <td class="p-3 border-r font-medium">Oil</td>
-                                        <td class="p-3 border-r italic text-gray-600">Super Exide 15w40 3.5 Ltr</td>
-                                        <td class="p-3 border-r font-bold text-blue-900">WINGSTUND TRADING PVT LTD</td>
-                                        <td class="p-3 border-r">7</td>
-                                        <td class="p-3 border-r">28 May 2018</td>
-                                        <td class="p-3 border-r font-bold">4.000</td>
-                                        <td class="p-3">PICS</td>
-                                    </tr>
+                                    {% endfor %}
                                 </tbody>
                             </table>
                         </div>

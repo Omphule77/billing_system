@@ -54,7 +54,8 @@
                         class="fas fa-shopping-cart w-5"></i> Purchase</a>
                 <a href="#" class="flex items-center gap-3 p-3 hover:bg-blue-700 rounded transition text-sm"><i
                         class="fas fa-chart-line w-5"></i> Sales</a>
-                <a href="#" class="flex items-center gap-3 p-3 hover:bg-blue-700 rounded transition text-sm"><i
+                <a href="{{url_for('main.inventory', id=user['id'])}}"
+                    class="flex items-center gap-3 p-3 hover:bg-blue-700 rounded transition text-sm"><i
                         class="fas fa-warehouse w-5"></i> Inventory</a>
                 <a href="#" class="flex items-center gap-3 p-3 hover:bg-blue-700 rounded transition text-sm"><i
                         class="fas fa-file-invoice w-5"></i> Reports</a>

@@ -15,7 +15,7 @@ def get_db_connection():
 
 @bp.route('/')
 def index():
-    return render_template('base.html')
+    return redirect(url_for('main.login'))
 
 @bp.route('/dashboard/<int:id>')
 def dashboard(id):
@@ -34,6 +34,74 @@ def dashboard(id):
     except Exception as e:
         print(f"Error found: {e}")
         return render_template('dashboard.html')
+
+@bp.route('/inventory/<int:id>')
+def inventory(id):
+    try:
+        db=get_db_connection()
+        cursor=db.cursor(dictionary=True)
+
+        query="select * from registration where id=%s"
+        cursor.execute(query,(id,))
+        user=cursor.fetchone()
+
+        q="select * from inventory_item"
+        cursor.execute(q)
+        items=cursor.fetchall()
+        cursor.close()
+        db.close()
+        return render_template('inventory.html', user=user, items=items)
+
+    except Exception as e:
+        print(f"Error found: {e}")
+        return render_template('inventory.html')
+
+
+@bp.route('/add_inventory_item/<int:id>', methods=['GET', 'POST'])
+def add_inventory_item(id):
+    if request.method=='POST':
+        item_name=request.form['item_name']
+        category=request.form['category']
+        price=request.form['price']
+        unit=request.form['unit']
+        quantity=request.form['quantity']
+        status=request.form['status']
+
+        try:
+            db=get_db_connection()
+            cursor=db.cursor(dictionary=True)
+
+            query="select * from registration where id=%s"
+            cursor.execute(query,(id,))
+            user=cursor.fetchone()
+
+            q="insert into inventory_item(item_name,category,price,unit,quantity,status) values(%s,%s,%s,%s,%s,%s)"
+            cursor.execute(q,(item_name,category,price,unit,quantity,status))
+            db.commit()
+            cursor.close() 
+            db.close()
+            flash('Inventory item added successfully!', 'success')
+            return redirect(url_for('main.inventory', user=user))
+
+        except Exception as e: 
+            print(f"Error found: {e}")
+            flash('Failed to add inventory item!', 'danger')
+            return redirect(url_for('main.inventory', id=id))
+    else:
+        try:
+            db=get_db_connection()
+            cursor=db.cursor(dictionary=True)
+
+            query="select * from registration where id=%s"
+            cursor.execute(query,(id,))
+            user=cursor.fetchone()
+            cursor.close()
+            db.close()
+            return render_template('add_inventory_item.html', user=user)
+        except Exception as e:
+            print(f"Error found: {e}")
+            return redirect(url_for('main.inventory', id=id))
+    
 
 @bp.route('/bill')
 def bill():
