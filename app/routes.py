@@ -103,9 +103,33 @@ def add_inventory_item(id):
             return redirect(url_for('main.inventory', id=id))
     
 
-@bp.route('/bill')
-def bill():
-    return render_template('bill.html')
+@bp.route('/bill/<int:id>/<int:hotel_id>/<int:bill_no>')
+def bill(id, hotel_id, bill_no):
+    try:
+        db = get_db_connection()
+        cursor = db.cursor(dictionary=True)
+
+        # Get User
+        query = "select * from registration where id=%s"
+        cursor.execute(query, (id,))
+        user = cursor.fetchone()
+
+        # Get Hotel
+        q = "select * from hotel where id=%s"
+        cursor.execute(q, (hotel_id,))
+        hotel = cursor.fetchone()
+
+        # Get Items
+        item_query = "select * from item_bill where bill_no=%s"
+        cursor.execute(item_query, (bill_no,))
+        items = cursor.fetchall()
+
+        cursor.close()
+        db.close()
+        return render_template('bill.html', user=user, hotel=hotel, items=items, bill_no=bill_no)
+    except Exception as e:
+        print(f"Error in bill generation: {e}")
+        return redirect(url_for('main.create_bill', id=id))
 
 @bp.route('/create_bill/<int:id>')
 def create_bill(id):
@@ -117,32 +141,130 @@ def create_bill(id):
         cursor.execute(query, (id,))
         user = cursor.fetchone()
 
-        q="select * from hotel"
-        cursor.execute(q)
+        bill_query="select max(bill_no) as bill_no from item_bill"
+        cursor.execute(bill_query)
+        result=cursor.fetchone()
+        next_bill_no = (result['bill_no'] or 0) + 1
+
+        next_bill_no = (result['bill_no'] or 0) + 1
+
+        search = request.args.get('search')
+        if search:
+            q="select * from hotel where hotel_name like %s"
+            cursor.execute(q, (f"%{search}%",))
+        else:
+            q="select * from hotel"
+            cursor.execute(q)
+            
         hotel=cursor.fetchall()
         
         cursor.close()
         db.close()
-        return render_template('create_bill.html', user=user,hotel=hotel)
+        return render_template('create_bill.html', user=user,hotel=hotel,bill_no=next_bill_no)
     except Exception as e:
         print(f"Error in create_bill: {e}")
-        return render_template('create_bill.html')
+        # Default to 1 if error
+        return render_template('create_bill.html', bill_no=1)
 
-@bp.route('/add_item/<int:id>/<int:hotel_id>')
-def add_item(id,hotel_id):
+@bp.route('/add_item/<int:id>/<int:hotel_id>/<int:bill_no>', methods=['GET', 'POST'])
+def add_item(id,hotel_id,bill_no):
+
+    if request.method=='POST':
+        veg_name=request.form['veg_name']
+        try:
+            quantity=float(request.form['quantity'])
+            db=get_db_connection()
+            cursor=db.cursor(dictionary=True)
+
+            query="select * from registration where id=%s"
+            cursor.execute(query,(id,))
+            user=cursor.fetchone()
+
+            q="select * from hotel where id=%s"
+            cursor.execute(q,(hotel_id,))
+            hotel=cursor.fetchone()
+            
+
+            inventory_query="select * from inventory_item where item_name=%s"
+            cursor.execute(inventory_query,(veg_name,))
+            inventory=cursor.fetchone()
+
+            if not inventory:
+                flash(f'Item {veg_name} not found in inventory!', 'danger')
+                return redirect(url_for('main.add_item', id=id, hotel_id=hotel_id, bill_no=bill_no))
+            rate=float(inventory['price'])
+            item_query="insert into item_bill(veg_name,quantity,rate,price,bill_no,hotel_id) values(%s,%s,%s,%s,%s,%s)"
+            cursor.execute(item_query,(veg_name,quantity,rate,rate* quantity,bill_no,hotel_id))
+            db.commit()
+
+            item_query_list="select * from item_bill where bill_no=%s"
+            cursor.execute(item_query_list,(bill_no,))
+            items=cursor.fetchall()
+            cursor.close()
+            db.close()
+            return render_template('add_item.html',user=user,hotel=hotel,items=items,bill_no=bill_no)
+        except Exception as e:
+            print(f"Error in add_item: {e}")
+            flash(f"Error adding item: {e}", "danger")
+            return redirect(url_for('main.create_bill', id=id))
+    else:
+        try:
+            db=get_db_connection()
+            cursor=db.cursor(dictionary=True)
+
+            query="select * from registration where id=%s"
+            cursor.execute(query,(id,))
+            user=cursor.fetchone()
+
+            
+            q="select * from hotel where id=%s"
+            cursor.execute(q,(hotel_id,))
+            hotel=cursor.fetchone()
+
+            item_query_list="select * from item_bill where bill_no=%s"
+            cursor.execute(item_query_list,(bill_no,))
+            items=cursor.fetchall()
+
+            cursor.close()
+            db.close()
+            return render_template('add_item.html',user=user,hotel=hotel,items=items,bill_no=bill_no)
+        except Exception as e:
+            print(f"Error in add_item: {e}")
+            flash(f"Error loading Add Item page: {e}", "danger")
+            return redirect(url_for('main.create_bill', id=id))
+
+@bp.route('/delete_item/<int:id>/<int:hotel_id>/<int:item_id>')
+def delete_item(id, hotel_id, item_id):
     try:
-        db=get_db_connection()
-        cursor=db.cursor(dictionary=True)
-
-        query="select * from registration where id=%s"
-        cursor.execute(query,(id,))
-        user=cursor.fetchone()
+        db = get_db_connection()
+        cursor = db.cursor()
+        query = "DELETE FROM item_bill WHERE item_id = %s"
+        cursor.execute(query, (item_id,))
+        db.commit()
         cursor.close()
         db.close()
-        return render_template('add_item.html',user=user)
+        flash('Item deleted successfully!', 'success')
     except Exception as e:
-        print(f"Error in add_item: {e}")
+        print(f"Error in delete_item: {e}")
+        flash('Failed to delete item.', 'danger')
+    return redirect(url_for('main.add_item', id=id, hotel_id=hotel_id))
+
+@bp.route('/cancel_bill/<int:id>/<int:hotel_id>/<int:bill_no>')
+def cancel_bill(id, hotel_id, bill_no):
+    try:
+        db = get_db_connection()
+        cursor = db.cursor()
+        query = "DELETE FROM item_bill WHERE bill_no = %s"
+        cursor.execute(query, (bill_no,))
+        db.commit()
+        cursor.close()
+        db.close()
+        flash('Bill cancelled successfully!', 'success')
         return redirect(url_for('main.create_bill', id=id))
+    except Exception as e:
+        print(f"Error in cancel_bill: {e}")
+        flash('Failed to cancel bill.', 'danger')
+        return redirect(url_for('main.add_item', id=id, hotel_id=hotel_id))
 
 @bp.route('/add_hotel/<int:id>',methods=['GET','POST'])
 def add_hotel(id):

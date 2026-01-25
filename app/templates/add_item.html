@@ -89,22 +89,22 @@
                         <i class="fas fa-plus-circle text-blue-500"></i> Add New Entry
                     </h2>
 
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 items-end">
+                    <form action="{{url_for('main.add_item', id=user['id'], hotel_id=hotel['id'], bill_no=bill_no)}}"
+                        method="post" class="grid grid-cols-1 md:grid-cols-3 gap-6 items-end">
                         <div>
                             <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Select Vegetable</label>
-                            <select
+                            <select name="veg_name" required
                                 class="w-full border rounded-md p-2.5 text-sm bg-gray-50 focus:ring-2 focus:ring-blue-400 outline-none">
                                 <option>Carrot</option>
-                                <option>Broccoli</option>
-                                <option>Spinach</option>
-                                <option>Tomato</option>
+                                <option>Onion</option>
+                                <option>Tomatoes</option>
                                 <option>Potato</option>
                             </select>
                         </div>
 
                         <div>
                             <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Quantity (in kg)</label>
-                            <input type="number" step="0.01" placeholder="0.00"
+                            <input type="number" name="quantity" step="0.01" placeholder="0.00"
                                 class="w-full border rounded-md p-2.5 text-sm bg-gray-50 focus:ring-2 focus:ring-blue-400 outline-none">
                         </div>
 
@@ -112,12 +112,13 @@
                             class="bg-saniro-blue text-white py-2.5 rounded-md font-bold uppercase tracking-wider hover:bg-blue-800 transition shadow-md">
                             Add to List
                         </button>
-                    </div>
+                    </form>
                 </div>
 
                 <div class="bg-white rounded shadow-sm border overflow-hidden">
-                    <div class="bg-gray-50 p-4 border-b font-bold text-gray-600">
-                        Current Vegetable Stock
+                    <div class="bg-gray-50 p-4 border-b font-bold text-gray-600 flex justify-between items-center">
+                        <span>Current Vegetable Stock</span>
+                        <span class="text-blue-600 text-sm">Bill No: #{{ bill_no }}</span>
                     </div>
                     <div class="overflow-x-auto">
                         <table class="w-full text-left text-sm">
@@ -132,47 +133,28 @@
                                 </tr>
                             </thead>
                             <tbody class="divide-y divide-gray-200">
+                                {% set x=namespace(total=0) %}
+                                {% for item in items %}
                                 <tr class="hover:bg-blue-50 transition">
-                                    <td class="p-3 border-r">1</td>
-                                    <td class="p-3 border-r font-bold text-blue-900">Fresh Carrot</td>
-                                    <td class="p-3 border-r">15.50</td>
-                                    <td class="p-3 border-r text-right">$1.20</td>
-                                    <td class="p-3 border-r text-right font-bold">$18.60</td>
+                                    <td class="p-3 border-r">{{ loop.index }}</td>
+                                    <td class="p-3 border-r font-bold text-blue-900">{{item['veg_name']}}</td>
+                                    <td class="p-3 border-r">{{item['quantity']}}</td>
+                                    <td class="p-3 border-r text-right">₹{{item['rate']}}</td>
+                                    <td class="p-3 border-r text-right font-bold">{{item['price']}}</td>
                                     <td class="p-3 text-center">
-                                        <button class="text-red-500 hover:text-red-700 transition">
+                                        <a href="{{ url_for('main.delete_item', id=user['id'], hotel_id=hotel['id'], item_id=item['item_id']) }}"
+                                            class="text-red-500 hover:text-red-700 transition">
                                             <i class="fas fa-times-circle text-lg"></i>
-                                        </button>
+                                        </a>
                                     </td>
                                 </tr>
-                                <tr class="bg-gray-50 hover:bg-blue-50 transition">
-                                    <td class="p-3 border-r">2</td>
-                                    <td class="p-3 border-r font-bold text-blue-900">Organic Broccoli</td>
-                                    <td class="p-3 border-r">5.25</td>
-                                    <td class="p-3 border-r text-right">$3.50</td>
-                                    <td class="p-3 border-r text-right font-bold">$18.37</td>
-                                    <td class="p-3 text-center">
-                                        <button class="text-red-500 hover:text-red-700 transition">
-                                            <i class="fas fa-times-circle text-lg"></i>
-                                        </button>
-                                    </td>
-                                </tr>
-                                <tr class="hover:bg-blue-50 transition">
-                                    <td class="p-3 border-r">3</td>
-                                    <td class="p-3 border-r font-bold text-blue-900">Red Tomatoes</td>
-                                    <td class="p-3 border-r">25.00</td>
-                                    <td class="p-3 border-r text-right">$0.80</td>
-                                    <td class="p-3 border-r text-right font-bold">$20.00</td>
-                                    <td class="p-3 text-center">
-                                        <button class="text-red-500 hover:text-red-700 transition">
-                                            <i class="fas fa-times-circle text-lg"></i>
-                                        </button>
-                                    </td>
-                                </tr>
+                                {% set x.total=x.total+(item['price'] | int) %}
+                                {% endfor %}
                             </tbody>
                             <tfoot class="bg-saniro-blue text-white font-bold">
                                 <tr>
                                     <td colspan="4" class="p-3 text-right uppercase text-xs">Total Stock Value</td>
-                                    <td class="p-3 text-right text-lg border-r border-blue-400">$56.97</td>
+                                    <td class="p-3 text-right text-lg border-r border-blue-400">₹{{x.total}}</td>
                                     <td class="p-3"></td>
                                 </tr>
                             </tfoot>
@@ -180,8 +162,12 @@
                     </div>
                 </div>
 
-                <div class="mt-6 flex justify-end">
-                    <a href="{{ url_for('main.bill') }}"
+                <div class="mt-6 flex justify-end gap-4">
+                    <a href="{{ url_for('main.cancel_bill', id=user['id'], hotel_id=hotel['id'], bill_no=bill_no) }}"
+                        class="bg-red-600 hover:bg-red-700 text-white py-3 px-8 rounded shadow-lg font-bold uppercase tracking-wider transition flex items-center gap-2">
+                        <i class="fas fa-trash-alt"></i> Cancel Bill
+                    </a>
+                    <a href="{{ url_for('main.bill', id=user['id'], hotel_id=hotel['id'], bill_no=bill_no) }}"
                         class="bg-green-600 hover:bg-green-700 text-white py-3 px-8 rounded shadow-lg font-bold uppercase tracking-wider transition flex items-center gap-2">
                         <i class="fas fa-file-invoice-dollar"></i> Generate Bill
                     </a>

@@ -19,11 +19,13 @@
                     <div class="bg-[#4a5f80] p-2 rounded text-white text-2xl">
                         <i class="fas fa-shopping-cart"></i>
                     </div>
-                    <h1 class="text-xl font-bold text-gray-800">Ecommerce Surface</h1>
+                    <h1 class="text-xl font-bold text-gray-800">SANIRO Billing</h1>
                 </div>
                 <div class="text-sm text-gray-700 space-y-1">
-                    <p><strong>Invoice Number:</strong> 1330</p>
-                    <p><strong>Date:</strong> 02/02/2022</p>
+                    <p><strong>Invoice Number:</strong> #{{ bill_no }}</p>
+                    <p><strong>Date:</strong>
+                        <script>document.write(new Date().toLocaleDateString())</script>
+                    </p>
                 </div>
             </div>
             <div class="mt-6 md:mt-0 bg-[#4a5f80] text-white px-10 py-3 text-4xl font-black tracking-widest uppercase">
@@ -36,15 +38,16 @@
         <div class="p-8 grid grid-cols-1 md:grid-cols-2 gap-8 text-sm">
             <div>
                 <h3 class="font-bold text-gray-800 mb-2">Bill from:</h3>
-                <p class="text-gray-600">Company Name</p>
-                <p class="text-gray-600">Street Address, Zip Code</p>
-                <p class="text-gray-600">Phone Number</p>
+                <p class="text-gray-600 font-bold">SANIRO Technologies Pvt Ltd</p>
+                <p class="text-gray-600">Sample Address, City</p>
+                <p class="text-gray-600">contact@saniro.com</p>
             </div>
             <div class="md:text-left">
-                <h3 class="font-bold text-gray-800 mb-2">Bill to:</h3>
-                <p class="text-gray-600">Customer Name</p>
-                <p class="text-gray-600">Street Address, Zip Code</p>
-                <p class="text-gray-600">Phone Number</p>
+                <h3 class="font-bold text-gray-800 mb-2">Bill to (Vendor):</h3>
+                <p class="text-gray-600 font-bold">{{ hotel['owner_name'] }}</p>
+                <p class="text-gray-600">{{ hotel['hotel_name'] }}</p>
+                <p class="text-gray-600">{{ hotel['address'] }}</p>
+                <p class="text-gray-600">{{ hotel['mobile'] }} | {{ hotel['email'] }}</p>
             </div>
         </div>
 
@@ -55,40 +58,24 @@
                         <th class="py-4 px-2">Item</th>
                         <th class="py-4 px-2 text-center">Quantity</th>
                         <th class="py-4 px-2 text-center">Rate</th>
-                        <th class="py-4 px-2 text-center">Tax</th>
                         <th class="py-4 px-2 text-right">Amount</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-gray-300">
+                    {% set cx = namespace(total=0) %}
+                    {% for item in items %}
                     <tr>
-                        <td class="py-6 px-2 align-top">Subscription-Based</td>
+                        <td class="py-6 px-2 align-top font-bold text-gray-700">{{ item['veg_name'] }}</td>
                         <td class="py-6 px-2 text-center align-top text-blue-600">
-                            30<br><span class="text-[10px] text-gray-500">days</span>
+                            {{ item['quantity'] }}<br><span class="text-[10px] text-gray-500">KG</span>
                         </td>
                         <td class="py-6 px-2 text-center align-top text-blue-600">
-                            $30.00<br><span class="text-[10px] text-gray-500">per month</span>
+                            ₹{{ item['rate'] }}<br><span class="text-[10px] text-gray-500">per KG</span>
                         </td>
-                        <td class="py-6 px-2 text-center align-top">0.00</td>
-                        <td class="py-6 px-2 text-right align-top">$30.00</td>
+                        <td class="py-6 px-2 text-right align-top font-bold">₹{{ item['price'] }}</td>
                     </tr>
-                    <tr>
-                        <td class="py-6 px-2 align-top">Online Gift Certificates</td>
-                        <td class="py-6 px-2 text-center align-top text-blue-600">
-                            02<br><span class="text-[10px] text-gray-500">person</span>
-                        </td>
-                        <td class="py-6 px-2 text-center align-top text-blue-600">
-                            $175<br><span class="text-[10px] text-gray-500">per person</span>
-                        </td>
-                        <td class="py-6 px-2 text-center align-top">0.00</td>
-                        <td class="py-6 px-2 text-right align-top">$350.00</td>
-                    </tr>
-                    <tr>
-                        <td class="py-6 px-2 align-top">Business-to-Business</td>
-                        <td class="py-6 px-2 text-center align-top text-blue-600">01</td>
-                        <td class="py-6 px-2 text-center align-top text-blue-600">$3000.00</td>
-                        <td class="py-6 px-2 text-center align-top">0.00</td>
-                        <td class="py-6 px-2 text-right align-top">$3000.00</td>
-                    </tr>
+                    {% set cx.total = cx.total + (item['price'] | float) %}
+                    {% endfor %}
                 </tbody>
             </table>
         </div>
@@ -96,32 +83,33 @@
         <div class="p-8 flex flex-col md:flex-row justify-between gap-6">
             <div class="text-sm">
                 <p class="font-bold text-gray-800">Terms & Conditions:</p>
+                <p class="text-gray-500 mt-1">Payment is due within 15 days.</p>
+                <p class="text-gray-500">Please make checks payable to SANIRO.</p>
             </div>
             <div class="w-full md:w-64 space-y-2 text-sm">
-                <div class="flex justify-between">
+                <div class="flex justify-between font-bold text-lg border-t pt-2">
                     <span>Subtotal:</span>
-                    <span>$3380.00</span>
-                </div>
-                <div class="flex justify-between">
-                    <span>Discount:</span>
-                    <span>$0.00</span>
-                </div>
-                <div class="flex justify-between">
-                    <span>Tax:</span>
-                    <span>$0.00</span>
-                </div>
-                <div class="flex justify-between">
-                    <span>Paid:</span>
-                    <span>$0.00</span>
+                    <span>₹{{ cx.total }}</span>
                 </div>
             </div>
         </div>
 
         <div class="bg-[#4a5f80] text-white p-4 mx-8 mb-8 flex justify-between items-center text-3xl font-light">
-            <span class="border-r border-white/30 pr-8">Total</span>
-            <span class="font-bold">$3380.00</span>
+            <span class="border-r border-white/30 pr-8">Total to Pay</span>
+            <span class="font-bold">₹{{ cx.total }}</span>
         </div>
 
+    </div>
+
+    <div class="text-center mt-8 mb-12 no-print">
+        <button onclick="window.print()"
+            class="bg-blue-600 text-white px-8 py-3 rounded shadow-lg hover:bg-blue-700 font-bold">
+            <i class="fas fa-print mr-2"></i> Print / Save as PDF
+        </button>
+        <a href="{{ url_for('main.create_bill', id=user['id']) }}"
+            class="bg-gray-500 text-white px-8 py-3 rounded shadow-lg hover:bg-gray-600 font-bold ml-4">
+            Back to Dashboard
+        </a>
     </div>
 
 </body>
