@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, request, redirect, url_for, flash, current_app, session
+from flask import Blueprint, render_template, request, redirect, url_for, flash, current_app, session, jsonify
 import mysql.connector
 
 bp = Blueprint('main', __name__)
@@ -103,6 +103,29 @@ def add_inventory_item(id):
             return redirect(url_for('main.inventory', id=id))
     
 
+@bp.route('/update_inventory_item/<int:item_id>', methods=['POST'])
+def update_inventory_item(item_id):
+    try:
+        data = request.get_json()
+        price = data.get('price')
+        quantity = data.get('quantity')
+        status = data.get('status')
+
+        db = get_db_connection()
+        cursor = db.cursor()
+        
+        query = "UPDATE inventory_item SET price=%s, quantity=%s, status=%s WHERE item_id=%s"
+        cursor.execute(query, (price, quantity, status, item_id))
+        db.commit()
+        
+        cursor.close()
+        db.close()
+        
+        return jsonify({'success': True, 'message': 'Item updated successfully'})
+    except Exception as e:
+        print(f"Error updating item: {e}")
+        return jsonify({'success': False, 'message': str(e)}), 500
+
 @bp.route('/bill/<int:id>/<int:hotel_id>/<int:bill_no>')
 def bill(id, hotel_id, bill_no):
     try:
@@ -192,9 +215,21 @@ def add_item(id,hotel_id,bill_no):
             if not inventory:
                 flash(f'Item {veg_name} not found in inventory!', 'danger')
                 return redirect(url_for('main.add_item', id=id, hotel_id=hotel_id, bill_no=bill_no))
+            
+            # Stock Validation
+            inventory_qty = float(inventory['quantity'])
+            if inventory_qty < quantity:
+                flash(f'Less stock available for {veg_name}. Only {inventory_qty} {inventory["unit"]} available.', 'danger')
+                return redirect(url_for('main.add_item', id=id, hotel_id=hotel_id, bill_no=bill_no))
+
             rate=float(inventory['price'])
             item_query="insert into item_bill(veg_name,quantity,rate,price,bill_no,hotel_id) values(%s,%s,%s,%s,%s,%s)"
             cursor.execute(item_query,(veg_name,quantity,rate,rate* quantity,bill_no,hotel_id))
+            
+            # Reduce quantity from inventory
+            update_inv_query = "UPDATE inventory_item SET quantity = quantity - %s WHERE item_name = %s"
+            cursor.execute(update_inv_query, (quantity, veg_name))
+            
             db.commit()
 
             item_query_list="select * from item_bill where bill_no=%s"
@@ -206,7 +241,7 @@ def add_item(id,hotel_id,bill_no):
         except Exception as e:
             print(f"Error in add_item: {e}")
             flash(f"Error adding item: {e}", "danger")
-            return redirect(url_for('main.create_bill', id=id))
+            return redirect(url_for('main.add_item', id=id, hotel_id=hotel_id, bill_no=bill_no))
     else:
         try:
             db=get_db_connection()
@@ -237,13 +272,26 @@ def add_item(id,hotel_id,bill_no):
 def delete_item(id, hotel_id, item_id):
     try:
         db = get_db_connection()
-        cursor = db.cursor()
-        query = "DELETE FROM item_bill WHERE item_id = %s"
-        cursor.execute(query, (item_id,))
-        db.commit()
+        cursor = db.cursor(dictionary=True)
+        
+        # 1. Fetch item details to restore inventory
+        get_item_query = "SELECT veg_name, quantity FROM item_bill WHERE item_id = %s"
+        cursor.execute(get_item_query, (item_id,))
+        item_to_restore = cursor.fetchone()
+        
+        if item_to_restore:
+            # 2. Restore inventory
+            restore_query = "UPDATE inventory_item SET quantity = quantity + %s WHERE item_name = %s"
+            cursor.execute(restore_query, (item_to_restore['quantity'], item_to_restore['veg_name']))
+            
+            # 3. Delete item
+            query = "DELETE FROM item_bill WHERE item_id = %s"
+            cursor.execute(query, (item_id,))
+            db.commit()
+            flash('Item deleted and stock restored successfully!', 'success')
+        
         cursor.close()
         db.close()
-        flash('Item deleted successfully!', 'success')
     except Exception as e:
         print(f"Error in delete_item: {e}")
         flash('Failed to delete item.', 'danger')
@@ -253,13 +301,25 @@ def delete_item(id, hotel_id, item_id):
 def cancel_bill(id, hotel_id, bill_no):
     try:
         db = get_db_connection()
-        cursor = db.cursor()
-        query = "DELETE FROM item_bill WHERE bill_no = %s"
-        cursor.execute(query, (bill_no,))
+        cursor = db.cursor(dictionary=True) # Use dictionary cursor for easier access
+        
+        # 1. Fetch items to restore inventory
+        get_items_query = "SELECT veg_name, quantity FROM item_bill WHERE bill_no = %s"
+        cursor.execute(get_items_query, (bill_no,))
+        items_to_restore = cursor.fetchall()
+        
+        # 2. Restore inventory for each item
+        restore_query = "UPDATE inventory_item SET quantity = quantity + %s WHERE item_name = %s"
+        for item in items_to_restore:
+            cursor.execute(restore_query, (item['quantity'], item['veg_name']))
+            
+        # 3. Delete items
+        delete_query = "DELETE FROM item_bill WHERE bill_no = %s"
+        cursor.execute(delete_query, (bill_no,))
+        
         db.commit()
         cursor.close()
         db.close()
-        flash('Bill cancelled successfully!', 'success')
         return redirect(url_for('main.create_bill', id=id))
     except Exception as e:
         print(f"Error in cancel_bill: {e}")

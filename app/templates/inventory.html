@@ -148,7 +148,7 @@
                                 </thead>
                                 <tbody class="divide-y divide-gray-200">
                                     {% for item in items %}
-                                    <tr class="hover:bg-blue-50 transition">
+                                    <tr id="row-{{item.item_id}}" class="hover:bg-blue-50 transition">
                                         <td class="p-3 border-r">{{item.item_id}}</td>
                                         <td class="p-3 border-r">
                                             <div
@@ -158,14 +158,20 @@
                                         </td>
                                         <td class="p-3 border-r font-bold text-gray-700">{{item.item_name}}</td>
                                         <td class="p-3 border-r text-gray-600">{{item.category}}</td>
-                                        <td class="p-3 border-r text-right">{{item.price}} / {{item.unit}}</td>
-                                        <td class="p-3 border-r text-right font-bold">{{item.quantity}}
-                                            {{item.unit}}</td>
-                                        <td class="p-3 border-r text-center"><span
-                                                class="px-2 py-1 bg-green-100 text-green-700 rounded-full text-xs font-bold">{{item.status}}</span>
+                                        <td class="p-3 border-r text-right">
+                                            <span class="price-val" data-raw="{{item.price}}">{{item.price}}</span> /
+                                            <span class="unit-val">{{item.unit}}</span>
                                         </td>
-                                        <td class="p-3 text-center">
-                                            <button class="text-blue-500 hover:text-blue-700 mx-1"><i
+                                        <td class="p-3 border-r text-right font-bold">
+                                            <span class="qty-val" data-raw="{{item.quantity}}">{{item.quantity}}</span>
+                                            {{item.unit}}
+                                        </td>
+                                        <td class="p-3 border-r text-center"><span
+                                                class="status-val px-2 py-1 bg-green-100 text-green-700 rounded-full text-xs font-bold"
+                                                data-raw="{{item.status}}">{{item.status}}</span></td>
+                                        <td class="p-3 text-center action-cell">
+                                            <button onclick="editRow('{{item.item_id}}')"
+                                                class="edit-btn text-blue-500 hover:text-blue-700 mx-1"><i
                                                     class="fas fa-edit"></i></button>
                                             <button class="text-red-500 hover:text-red-700 mx-1"><i
                                                     class="fas fa-trash"></i></button>
@@ -190,6 +196,76 @@
         function toggleSidebar() {
             const sidebar = document.getElementById('sidebar');
             sidebar.classList.toggle('-translate-x-full');
+        }
+
+        function editRow(id) {
+            const row = document.getElementById('row-' + id);
+
+            // Get current values
+            const priceSpan = row.querySelector('.price-val');
+            const qtySpan = row.querySelector('.qty-val');
+            const statusSpan = row.querySelector('.status-val');
+
+            const currentPrice = priceSpan.getAttribute('data-raw');
+            const currentQty = qtySpan.getAttribute('data-raw');
+            const currentStatus = statusSpan.getAttribute('data-raw');
+
+            // Replace with inputs
+            priceSpan.innerHTML = `<input type="number" id="price-${id}" value="${currentPrice}" class="w-20 border rounded px-1 py-1 text-xs" step="0.01">`;
+            qtySpan.innerHTML = `<input type="number" id="qty-${id}" value="${currentQty}" class="w-16 border rounded px-1 py-1 text-xs" step="any">`;
+
+            const statusSelect = `
+                <select id="status-${id}" class="border rounded px-1 py-1 text-xs">
+                    <option value="In Stock" ${currentStatus === 'In Stock' ? 'selected' : ''}>In Stock</option>
+                    <option value="Low Stock" ${currentStatus === 'Low Stock' ? 'selected' : ''}>Low Stock</option>
+                    <option value="Out of Stock" ${currentStatus === 'Out of Stock' ? 'selected' : ''}>Out of Stock</option>
+                </select>
+            `;
+            statusSpan.outerHTML = `<span id="status-span-${id}">${statusSelect}</span>`;
+
+            // Change Edit button to Save button
+            const actionCell = row.querySelector('.action-cell');
+            const editBtn = actionCell.querySelector('.edit-btn');
+
+            // Hide edit button and add save button temporarily
+            editBtn.style.display = 'none';
+
+            const saveBtn = document.createElement('button');
+            saveBtn.innerHTML = '<i class="fas fa-save"></i>';
+            saveBtn.className = 'text-green-500 hover:text-green-700 mx-1 save-btn';
+            saveBtn.onclick = function () { saveRow(id); };
+
+            actionCell.insertBefore(saveBtn, editBtn);
+        }
+
+        function saveRow(id) {
+            const price = document.getElementById('price-' + id).value;
+            const quantity = document.getElementById('qty-' + id).value; // Changed variable name to quantity to match backend
+            const status = document.getElementById('status-' + id).value;
+
+            fetch(`/update_inventory_item/${id}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    price: price,
+                    quantity: quantity,
+                    status: status
+                })
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        location.reload();
+                    } else {
+                        alert('Error updating item: ' + data.message);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('An error occurred while updating.');
+                });
         }
     </script>
 </body>
