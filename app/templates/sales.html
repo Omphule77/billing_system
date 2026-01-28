@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sales Dashboard - Saniro Billing System</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        .sidebar-scroll::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        .sidebar-scroll::-webkit-scrollbar-thumb {
+            background: #3b82f6;
+            border-radius: 10px;
+        }
+    </style>
+</head>
+
+<body class="bg-gray-100 font-sans overflow-x-hidden">
+
+    <div class="flex min-h-screen relative">
+        <!-- Sidebar -->
+        <aside id="sidebar"
+            class="fixed inset-y-0 left-0 z-50 w-64 bg-[#234b9b] text-white transform -translate-x-full transition-transform duration-300 ease-in-out md:relative md:translate-x-0 flex flex-col shadow-xl">
+
+            <div class="p-4 flex items-center justify-between border-b border-blue-800">
+                <div class="bg-white p-1 rounded px-3">
+                    <span class="text-[#234b9b] font-black text-xl tracking-tighter">SANIRO</span>
+                </div>
+                <button onclick="toggleSidebar()" class="md:hidden text-white"><i class="fas fa-times"></i></button>
+            </div>
+
+            <div class="p-6 text-center border-b border-blue-800 bg-[#1e3e82]">
+                <div
+                    class="w-16 h-16 bg-gray-200 rounded-full mx-auto mb-2 overflow-hidden border-2 border-white shadow-md">
+                    <img src="https://ui-avatars.com/api/?name={{user['name']}}&background=random" alt="User">
+                </div>
+                <p class="text-[10px] uppercase tracking-widest text-blue-300">Welcome,</p>
+                <p class="font-bold text-sm">{{user['name']}}</p>
+            </div>
+
+            <nav class="flex-grow p-4 space-y-1 sidebar-scroll overflow-y-auto">
+                <a href="{{url_for('main.create_bill', id=user['id'])}}"
+                    class="flex items-center gap-3 p-3 hover:bg-blue-700 rounded transition text-sm"><i
+                        class="fas fa-th-large w-5"></i> Create New Bill</a>
+                <a href="{{url_for('main.hotel_portfolio', id=user['id'])}}"
+                    class="flex items-center gap-3 p-3 hover:bg-blue-700 rounded transition text-sm"><i
+                        class="fas fa-building w-5"></i> Hotel Portfolio</a>
+                <a href="{{url_for('main.sales', id=user['id'])}}"
+                    class="flex items-center gap-3 p-3 bg-blue-900 rounded transition text-sm shadow-inner"><i
+                        class="fas fa-chart-line w-5"></i> Sales</a>
+                <a href="{{url_for('main.inventory', id=user['id'])}}"
+                    class="flex items-center gap-3 p-3 hover:bg-blue-700 rounded transition text-sm"><i
+                        class="fas fa-warehouse w-5"></i> Inventory</a>
+            </nav>
+        </aside>
+
+        <main class="flex-grow flex flex-col w-full min-w-0">
+            <header class="h-16 bg-white shadow-md flex items-center justify-between px-4 sticky top-0 z-40">
+                <div class="flex items-center gap-4">
+                    <button onclick="toggleSidebar()" class="text-blue-800 md:hidden text-xl"><i
+                            class="fas fa-bars"></i></button>
+                    <i class="fas fa-outdent text-gray-400 hidden md:block"></i>
+                </div>
+                <div class="flex items-center gap-4">
+                    <div class="flex gap-4 mr-4 border-r pr-4">
+                        <i class="fas fa-envelope text-blue-500 cursor-pointer"></i>
+                        <i class="fas fa-bell text-blue-500 cursor-pointer"></i>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <span class="text-sm font-bold text-gray-700 hidden sm:inline">{{user['name']}}</span>
+                        <img src="https://ui-avatars.com/api/?name={{user['name']}}" class="rounded-full w-8 h-8">
+                    </div>
+                </div>
+            </header>
+
+            <div class="p-4 md:p-6">
+                <div class="flex justify-between items-center mb-6">
+                    <h2 class="text-2xl font-bold text-gray-800">Sales Dashboard</h2>
+                    <div class="text-sm text-gray-500 bg-white px-4 py-2 rounded-full shadow-sm">
+                        <i class="far fa-calendar-alt mr-2"></i> {{ year_month }} (Current Data)
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+
+                    <!-- Chart 1: Item Sales (Pie) -->
+                    <div class="bg-white rounded-xl shadow-md p-6 border border-gray-100">
+                        <h3 class="text-lg font-bold text-gray-700 mb-4 flex items-center">
+                            <i class="fas fa-chart-pie text-blue-500 mr-2"></i> Item Quantity This Month
+                        </h3>
+                        <div class="h-64">
+                            <canvas id="itemPieChart"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- Chart 3: Hotel Revenue (Polar Area / Bar) -->
+                    <div class="bg-white rounded-xl shadow-md p-6 border border-gray-100">
+                        <h3 class="text-lg font-bold text-gray-700 mb-4 flex items-center">
+                            <i class="fas fa-hotel text-purple-500 mr-2"></i> Hotel Spending This Month
+                        </h3>
+                        <div class="h-64">
+                            <canvas id="hotelRevenueChart"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- Chart 2: Monthly Revenue (Bar) - Full Width -->
+                    <div class="bg-white rounded-xl shadow-md p-6 border border-gray-100 lg:col-span-2">
+                        <h3 class="text-lg font-bold text-gray-700 mb-4 flex items-center">
+                            <i class="fas fa-chart-bar text-green-500 mr-2"></i> Monthly Revenue (Current Year)
+                        </h3>
+                        <div class="h-64">
+                            <canvas id="monthlyRevenueChart"></canvas>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <footer
+                class="mt-auto p-6 text-center text-[11px] text-gray-400 uppercase tracking-widest border-t bg-white">
+                Copyright © 2024 | Designed by <span class="text-blue-500 font-bold">Saniro Technologies Pvt Ltd</span>
+            </footer>
+        </main>
+    </div>
+
+    <script>
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            sidebar.classList.toggle('-translate-x-full');
+        }
+
+        // --- Chart 1: Item Sales (Pie) ---
+        const itemLabels = JSON.parse('{{ item_labels | tojson }}');
+        const itemValues = JSON.parse('{{ item_values | tojson }}');
+
+        new Chart(document.getElementById('itemPieChart'), {
+            type: 'pie',
+            data: {
+                labels: itemLabels,
+                datasets: [{
+                    data: itemValues,
+                    backgroundColor: ['#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#ec4899', '#6366f1'],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { position: 'right' },
+                    tooltip: {
+                        callbacks: {
+                            label: function (context) {
+                                let label = context.label || '';
+                                if (label) { label += ': '; }
+                                if (context.parsed !== null) { label += context.parsed + ' kg'; }
+                                return label;
+                            }
+                        }
+                    }
+                }
+            }
+        });
+
+        // --- Chart 2: Monthly Revenue (Bar/Histogram) ---
+        const monthLabels = JSON.parse('{{ month_labels | tojson }}');
+        const monthValues = JSON.parse('{{ month_values | tojson }}');
+
+        new Chart(document.getElementById('monthlyRevenueChart'), {
+            type: 'bar',
+            data: {
+                labels: monthLabels,
+                datasets: [{
+                    label: 'Revenue (₹)',
+                    data: monthValues,
+                    backgroundColor: '#10b981',
+                    borderRadius: 4
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { display: false }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            callback: function (value) { return '₹' + value; }
+                        }
+                    }
+                }
+            }
+        });
+
+        // --- Chart 3: Hotel Revenue (Bar) ---
+        const hotelLabels = JSON.parse('{{ hotel_labels | tojson }}');
+        const hotelValues = JSON.parse('{{ hotel_values | tojson }}');
+
+        new Chart(document.getElementById('hotelRevenueChart'), {
+            type: 'bar', // Using Bar chart for clear comparison
+            data: {
+                labels: hotelLabels,
+                datasets: [{
+                    label: 'Spent (₹)',
+                    data: hotelValues,
+                    backgroundColor: '#8b5cf6',
+                    borderRadius: 4
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                indexAxis: 'y', // Horizontal Bar Chart
+                plugins: {
+                    legend: { display: false }
+                },
+                scales: {
+                    x: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+    </script>
+</body>
+
+</html>

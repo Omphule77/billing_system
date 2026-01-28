@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hotel Portfolio - Saniro Billing System</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        /* Custom scrollbar for sidebar */
+        .sidebar-scroll::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        .sidebar-scroll::-webkit-scrollbar-thumb {
+            background: #3b82f6;
+            border-radius: 10px;
+        }
+    </style>
+</head>
+
+<body class="bg-gray-100 font-sans overflow-x-hidden">
+
+    <div class="flex min-h-screen relative">
+
+        <aside id="sidebar"
+            class="fixed inset-y-0 left-0 z-50 w-64 bg-[#234b9b] text-white transform -translate-x-full transition-transform duration-300 ease-in-out md:relative md:translate-x-0 flex flex-col shadow-xl">
+
+            <div class="p-4 flex items-center justify-between border-b border-blue-800">
+                <div class="bg-white p-1 rounded px-3">
+                    <span class="text-[#234b9b] font-black text-xl tracking-tighter">SANIRO</span>
+                </div>
+                <button onclick="toggleSidebar()" class="md:hidden text-white"><i class="fas fa-times"></i></button>
+            </div>
+
+            <div class="p-6 text-center border-b border-blue-800 bg-[#1e3e82]">
+                <div
+                    class="w-16 h-16 bg-gray-200 rounded-full mx-auto mb-2 overflow-hidden border-2 border-white shadow-md">
+                    <img src="https://ui-avatars.com/api/?name={{user['name']}}&background=random" alt="User">
+                </div>
+                <p class="text-[10px] uppercase tracking-widest text-blue-300">Welcome,</p>
+                <p class="font-bold text-sm">{{user['name']}}</p>
+            </div>
+
+            <nav class="flex-grow p-4 space-y-1 sidebar-scroll overflow-y-auto">
+                <a href="{{url_for('main.create_bill', id=user['id'])}}"
+                    class="flex items-center gap-3 p-3 hover:bg-blue-700 rounded transition text-sm"><i
+                        class="fas fa-th-large w-5"></i> Create New Bill</a>
+                <a href="{{url_for('main.hotel_portfolio', id=user['id'])}}"
+                    class="flex items-center gap-3 p-3 bg-blue-900 rounded transition text-sm shadow-inner"><i
+                        class="fas fa-building w-5"></i> Hotel Portfolio</a>
+                <a href="{{url_for('main.sales', id=user['id'])}}"
+                    class="flex items-center gap-3 p-3 hover:bg-blue-700 rounded transition text-sm"><i
+                        class="fas fa-chart-line w-5"></i> Sales</a>
+                <a href="{{url_for('main.inventory', id=user['id'])}}"
+                    class="flex items-center gap-3 p-3 hover:bg-blue-700 rounded transition text-sm"><i
+                        class="fas fa-warehouse w-5"></i> Inventory</a>
+            </nav>
+        </aside>
+
+        <main class="flex-grow flex flex-col w-full min-w-0">
+
+            <header class="h-16 bg-white shadow-md flex items-center justify-between px-4 sticky top-0 z-40">
+                <div class="flex items-center gap-4">
+                    <button onclick="toggleSidebar()" class="text-blue-800 md:hidden text-xl"><i
+                            class="fas fa-bars"></i></button>
+                    <i class="fas fa-outdent text-gray-400 hidden md:block"></i>
+                </div>
+                <div class="flex items-center gap-4">
+                    <div class="flex gap-4 mr-4 border-r pr-4">
+                        <i class="fas fa-envelope text-blue-500 cursor-pointer"></i>
+                        <i class="fas fa-bell text-blue-500 cursor-pointer"></i>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <span class="text-sm font-bold text-gray-700 hidden sm:inline">{{user['name']}}</span>
+                        <img src="https://ui-avatars.com/api/?name={{user['name']}}" class="rounded-full w-8 h-8">
+                    </div>
+                </div>
+            </header>
+
+            <div class="p-4 md:p-6">
+                <div
+                    class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden min-h-[calc(100vh-140px)]">
+
+                    <div class="bg-gray-50 p-4 border-b flex justify-between items-center">
+                        <h2 class="text-gray-700 font-bold flex items-center gap-2">
+                            <i class="fas fa-building text-blue-500"></i> Hotel Portfolio
+                        </h2>
+                        <a href="{{url_for('main.add_hotel', id=user['id'])}}"
+                            class="bg-blue-600 text-white px-4 py-2 rounded text-sm hover:bg-blue-700 transition shadow">
+                            <i class="fas fa-plus mr-1"></i> Add Hotel
+                        </a>
+                    </div>
+
+                    <div class="p-6">
+                        {% if hotels %}
+                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                            {% for hotel in hotels %}
+                            <div
+                                class="bg-white rounded-xl shadow-md hover:shadow-xl transition-shadow duration-300 border border-gray-100 overflow-hidden group">
+                                <div class="h-2 bg-gradient-to-r from-blue-400 to-blue-600"></div>
+                                <div class="p-5">
+                                    <div class="flex justify-between items-start mb-4">
+                                        <div
+                                            class="bg-blue-50 text-blue-600 rounded-lg p-3 group-hover:bg-blue-600 group-hover:text-white transition-colors duration-300">
+                                            <i class="fas fa-hotel text-xl"></i>
+                                        </div>
+                                        <div class="text-xs font-bold text-gray-400 bg-gray-100 px-2 py-1 rounded">#{{
+                                            loop.index }}</div>
+                                    </div>
+
+                                    <h3 class="text-lg font-bold text-gray-800 mb-1">{{ hotel.hotel_name }}</h3>
+                                    <p class="text-sm text-gray-500 mb-4 flex items-center gap-2">
+                                        <i class="fas fa-user-circle text-gray-400"></i> {{ hotel.owner_name }}
+                                    </p>
+
+                                    <div class="space-y-2 border-t pt-4">
+                                        <div class="flex items-center gap-3 text-sm text-gray-600">
+                                            <div class="w-8 text-center text-blue-500"><i
+                                                    class="fas fa-map-marker-alt"></i></div>
+                                            <span class="flex-1 truncate">{{ hotel.address }}</span>
+                                        </div>
+                                        <div class="flex items-center gap-3 text-sm text-gray-600">
+                                            <div class="w-8 text-center text-blue-500"><i class="fas fa-phone"></i>
+                                            </div>
+                                            <span>{{ hotel.mobile }}</span>
+                                        </div>
+                                        <div class="flex items-center gap-3 text-sm text-gray-600">
+                                            <div class="w-8 text-center text-blue-500"><i class="fas fa-envelope"></i>
+                                            </div>
+                                            <span class="break-all">{{ hotel.email }}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="bg-gray-50 px-5 py-3 border-t flex justify-end gap-2">
+                                    <a href="{{ url_for('main.hotel_details', id=user['id'], hotel_id=hotel['id']) }}"
+                                        class="text-blue-500 hover:text-blue-700 bg-white border border-blue-200 hover:border-blue-400 p-2 rounded-full h-8 w-8 flex items-center justify-center transition"
+                                        title="View Details">
+                                        <i class="fas fa-eye text-xs"></i>
+                                    </a>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                        {% else %}
+                        <div class="text-center py-20">
+                            <div
+                                class="bg-blue-50 text-blue-500 rounded-full h-20 w-20 flex items-center justify-center mx-auto mb-4">
+                                <i class="fas fa-hotel text-3xl"></i>
+                            </div>
+                            <h3 class="text-xl font-bold text-gray-700 mb-2">No Hotels Found</h3>
+                            <p class="text-gray-500 mb-6">Start by adding your first hotel to the portfolio.</p>
+                            <a href="{{url_for('main.add_hotel', id=user['id'])}}"
+                                class="inline-block bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition shadow-lg font-bold">
+                                Add New Hotel
+                            </a>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <footer
+                class="mt-auto p-6 text-center text-[11px] text-gray-400 uppercase tracking-widest border-t bg-white">
+                Copyright © 2024 | Designed by <span class="text-blue-500 font-bold">Saniro Technologies Pvt Ltd</span>
+            </footer>
+        </main>
+    </div>
+
+    <script>
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            sidebar.classList.toggle('-translate-x-full');
+        }
+    </script>
+</body>
+
+</html>

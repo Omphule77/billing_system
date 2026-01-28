@@ -13,6 +13,81 @@ def get_db_connection():
 
 
 
+@bp.route('/hotel_portfolio/<int:id>')
+def hotel_portfolio(id):
+    try:
+        db = get_db_connection()
+        cursor = db.cursor(dictionary=True)
+        
+        query="select * from registration where id=%s"
+        cursor.execute(query,(id,))
+        user=cursor.fetchone()
+        
+        q="select * from hotel"
+        cursor.execute(q)
+        hotels=cursor.fetchall()
+        
+        cursor.close()
+        db.close()
+        return render_template('hotel_portfolio.html', user=user, hotels=hotels)
+    except Exception as e:
+        print(f"Error in hotel_portfolio: {e}")
+        return render_template('hotel_portfolio.html')
+
+@bp.route('/hotel_details/<int:id>/<int:hotel_id>')
+def hotel_details(id, hotel_id):
+    try:
+        db = get_db_connection()
+        cursor = db.cursor(dictionary=True)
+        
+        # Get User
+        query="select * from registration where id=%s"
+        cursor.execute(query,(id,))
+        user=cursor.fetchone()
+        
+        # Get Hotel Details
+        q="select * from hotel where id=%s"
+        cursor.execute(q, (hotel_id,))
+        hotel=cursor.fetchone()
+
+        # Get Item Analysis for Pie Chart (Sum quantity grouped by veg_name)
+        chart_query = """
+            SELECT veg_name, SUM(quantity) as total_qty 
+            FROM item_bill 
+            WHERE hotel_id = %s 
+            GROUP BY veg_name
+        """
+        cursor.execute(chart_query, (hotel_id,))
+        chart_results = cursor.fetchall()
+        
+        chart_labels = [row['veg_name'] for row in chart_results]
+        chart_values = [float(row['total_qty']) for row in chart_results]
+
+        # Get All Bills Summary
+        # Since we don't have a bills table, we group item_bill by bill_no
+        bills_query = """
+            SELECT bill_no, count(*) as total_items, SUM(price) as total_amount 
+            FROM item_bill 
+            WHERE hotel_id = %s 
+            GROUP BY bill_no 
+            ORDER BY bill_no DESC
+        """
+        cursor.execute(bills_query, (hotel_id,))
+        bills = cursor.fetchall()
+
+        cursor.close()
+        db.close()
+        
+        return render_template('hotel_details.html', 
+                             user=user, 
+                             hotel=hotel, 
+                             chart_labels=chart_labels, 
+                             chart_values=chart_values,
+                             bills=bills)
+    except Exception as e:
+        print(f"Error in hotel_details: {e}")
+        return redirect(url_for('main.hotel_portfolio', id=id))
+
 @bp.route('/')
 def index():
     return redirect(url_for('main.login'))
@@ -223,7 +298,7 @@ def add_item(id,hotel_id,bill_no):
                 return redirect(url_for('main.add_item', id=id, hotel_id=hotel_id, bill_no=bill_no))
 
             rate=float(inventory['price'])
-            item_query="insert into item_bill(veg_name,quantity,rate,price,bill_no,hotel_id) values(%s,%s,%s,%s,%s,%s)"
+            item_query="insert into item_bill(veg_name,quantity,rate,price,bill_no,hotel_id,date) values(%s,%s,%s,%s,%s,%s,NOW())"
             cursor.execute(item_query,(veg_name,quantity,rate,rate* quantity,bill_no,hotel_id))
             
             # Reduce quantity from inventory
@@ -323,8 +398,76 @@ def cancel_bill(id, hotel_id, bill_no):
         return redirect(url_for('main.create_bill', id=id))
     except Exception as e:
         print(f"Error in cancel_bill: {e}")
-        flash('Failed to cancel bill.', 'danger')
-        return redirect(url_for('main.add_item', id=id, hotel_id=hotel_id))
+        flash(f"Error cancelling bill: {e}", "danger")
+        return redirect(url_for('main.create_bill', id=id))
+
+@bp.route('/sales/<int:id>')
+def sales(id):
+    try:
+        db = get_db_connection()
+        cursor = db.cursor(dictionary=True)
+        
+        # Get User
+        query="select * from registration where id=%s"
+        cursor.execute(query,(id,))
+        user=cursor.fetchone()
+
+        # 1. Item Quantity This Month (Pie Chart)
+        item_query = """
+            SELECT veg_name, SUM(quantity) as total_qty 
+            FROM item_bill 
+            WHERE MONTH(date) = MONTH(CURRENT_DATE()) AND YEAR(date) = YEAR(CURRENT_DATE())
+            GROUP BY veg_name
+        """
+        cursor.execute(item_query)
+        item_results = cursor.fetchall()
+        item_labels = [row['veg_name'] for row in item_results]
+        item_values = [float(row['total_qty']) for row in item_results]
+
+        # 2. Monthly Revenue This Year (Histogram/Bar)
+        revenue_query = """
+            SELECT MONTHNAME(date) as month, SUM(price) as total_revenue
+            FROM item_bill
+            WHERE YEAR(date) = YEAR(CURRENT_DATE())
+            GROUP BY MONTH(date), MONTHNAME(date)
+            ORDER BY MONTH(date)
+        """
+        cursor.execute(revenue_query)
+        revenue_results = cursor.fetchall()
+        month_labels = [row['month'] for row in revenue_results]
+        month_values = [float(row['total_revenue']) for row in revenue_results]
+
+        # 3. Hotel Spending This Month (Graph)
+        hotel_query = """
+            SELECT h.hotel_name, SUM(ib.price) as total_spent
+            FROM item_bill ib
+            JOIN hotel h ON ib.hotel_id = h.id
+            WHERE MONTH(ib.date) = MONTH(CURRENT_DATE()) AND YEAR(ib.date) = YEAR(CURRENT_DATE())
+            GROUP BY h.id, h.hotel_name
+            ORDER BY total_spent DESC
+        """
+        cursor.execute(hotel_query)
+        hotel_results = cursor.fetchall()
+        hotel_labels = [row['hotel_name'] for row in hotel_results]
+        hotel_values = [float(row['total_spent']) for row in hotel_results]
+
+        cursor.close()
+        db.close()
+
+        import datetime
+        current_date = datetime.datetime.now()
+        year_month = current_date.strftime("%B %Y")
+
+        return render_template('sales.html', 
+                             user=user,
+                             item_labels=item_labels, item_values=item_values,
+                             month_labels=month_labels, month_values=month_values,
+                             hotel_labels=hotel_labels, hotel_values=hotel_values,
+                             year_month=year_month)
+
+    except Exception as e:
+        print(f"Error in sales: {e}")
+        return redirect(url_for('main.create_bill', id=id))
 
 @bp.route('/add_hotel/<int:id>',methods=['GET','POST'])
 def add_hotel(id):
@@ -385,8 +528,9 @@ def login():
             
             if user:
                 if user['password'] == password:
+                    session['user_id'] = user['id']
                     flash('Login successful!', 'success')
-                    return redirect(url_for('main.dashboard',id=user['id']))
+                    return redirect(url_for('main.sales', id=user['id']))
                 else:
                      flash('Invalid email or password', 'danger')
             else:

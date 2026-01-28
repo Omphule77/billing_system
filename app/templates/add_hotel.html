@@ -44,15 +44,18 @@
             </div>
 
             <nav class="flex-grow p-4 space-y-1 sidebar-scroll overflow-y-auto">
-                <a href="{{ url_for('main.create_bill', id=user['id']) }}"
-                    class="flex items-center gap-3 p-3 hover:bg-blue-700 rounded transition text-sm text-white">
-                    <i class="fas fa-arrow-left w-5"></i> Back to Bills
-                </a>
-                <div class="mt-4 px-3 text-xs uppercase text-blue-300 font-bold tracking-wider">Registration</div>
-                <a href="#"
-                    class="flex items-center gap-3 p-3 bg-blue-900 rounded transition text-sm shadow-inner mt-1">
-                    <i class="fas fa-hotel w-5"></i> Add New Hotel
-                </a>
+                <a href="{{url_for('main.create_bill', id=user['id'])}}"
+                    class="flex items-center gap-3 p-3 hover:bg-blue-700 rounded transition text-sm"><i
+                        class="fas fa-th-large w-5"></i> Create New Bill</a>
+                <a href="{{url_for('main.hotel_portfolio', id=user['id'])}}"
+                    class="flex items-center gap-3 p-3 hover:bg-blue-700 rounded transition text-sm"><i
+                        class="fas fa-building w-5"></i> Hotel Portfolio</a>
+                <a href="{{url_for('main.sales', id=user['id'])}}"
+                    class="flex items-center gap-3 p-3 hover:bg-blue-700 rounded transition text-sm"><i
+                        class="fas fa-chart-line w-5"></i> Sales</a>
+                <a href="{{url_for('main.inventory', id=user['id'])}}"
+                    class="flex items-center gap-3 p-3 hover:bg-blue-700 rounded transition text-sm"><i
+                        class="fas fa-warehouse w-5"></i> Inventory</a>
             </nav>
         </aside>
 
