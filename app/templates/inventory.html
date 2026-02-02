@@ -94,97 +94,120 @@
                     </div>
 
                     <div class="p-4 md:p-6">
-                        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-                            <div>
-                                <label class="text-[11px] font-bold text-gray-500 uppercase">Search by Item</label>
-                                <input type="text" placeholder="Item Name"
-                                    class="w-full mt-1 border rounded px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none">
-                            </div>
-                            <div>
-                                <label class="text-[11px] font-bold text-gray-500 uppercase">Category</label>
-                                <select
-                                    class="w-full mt-1 border rounded px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none">
-                                    <option>All Categories</option>
-                                    <option>Leafy Greens</option>
-                                    <option>Root Vegetables</option>
-                                    <option>Fruits</option>
-                                </select>
-                            </div>
-                            <div>
-                                <label class="text-[11px] font-bold text-gray-500 uppercase">Stock Status</label>
-                                <select
-                                    class="w-full mt-1 border rounded px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none">
-                                    <option>All</option>
-                                    <option>In Stock</option>
-                                    <option>Low Stock</option>
-                                    <option>Out of Stock</option>
-                                </select>
-                            </div>
-                            <div class="flex items-end">
-                                <button
-                                    class="w-full bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded font-bold transition shadow-md">
-                                    SEARCH
-                                </button>
-                            </div>
-                        </div>
+                        <div class="p-4 md:p-6">
+                            <form action="{{ url_for('main.inventory', id=user['id']) }}" method="GET"
+                                class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+                                <div>
+                                    <label class="text-[11px] font-bold text-gray-500 uppercase">Search by Item</label>
+                                    <input type="text" name="search" placeholder="Item Name"
+                                        value="{{ request.args.get('search', '') }}"
+                                        class="w-full mt-1 border rounded px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none">
+                                </div>
+                                <div>
+                                    <label class="text-[11px] font-bold text-gray-500 uppercase">Category</label>
+                                    <select name="category"
+                                        class="w-full mt-1 border rounded px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none">
+                                        <option value="">All Categories</option>
+                                        <option value="Leafy Greens" {% if request.args.get('category')=='Leafy Greens'
+                                            %}selected{% endif %}>Leafy Greens</option>
+                                        <option value="Root Vegetables" {% if
+                                            request.args.get('category')=='Root Vegetables' %}selected{% endif %}>Root
+                                            Vegetables</option>
+                                        <option value="Fruits" {% if request.args.get('category')=='Fruits' %}selected{%
+                                            endif %}>Fruits</option>
+                                        <option value="Others" {% if request.args.get('category')=='Others' %}selected{%
+                                            endif %}>Others</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="text-[11px] font-bold text-gray-500 uppercase">Stock Status</label>
+                                    <select name="status"
+                                        class="w-full mt-1 border rounded px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none">
+                                        <option value="">All</option>
+                                        <option value="In Stock" {% if request.args.get('status')=='In Stock'
+                                            %}selected{% endif %}>In Stock</option>
+                                        <option value="Low Stock" {% if request.args.get('status')=='Low Stock'
+                                            %}selected{% endif %}>Low Stock</option>
+                                        <option value="Out of Stock" {% if request.args.get('status')=='Out of Stock'
+                                            %}selected{% endif %}>Out of Stock</option>
+                                    </select>
+                                </div>
+                                <div class="flex items-end">
+                                    <button type="submit"
+                                        class="w-full bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded font-bold transition shadow-md">
+                                        SEARCH
+                                    </button>
+                                </div>
+                            </form>
 
-                        <div class="overflow-x-auto rounded-lg border border-gray-200">
-                            <table class="w-full text-sm text-left border-collapse">
-                                <thead class="bg-blue-400 text-white">
-                                    <tr>
-                                        <th class="p-3 border-r border-blue-300">ID</th>
-                                        <th class="p-3 border-r border-blue-300 whitespace-nowrap">Image</th>
-                                        <th class="p-3 border-r border-blue-300 whitespace-nowrap">Item Name</th>
-                                        <th class="p-3 border-r border-blue-300 whitespace-nowrap">Category</th>
-                                        <th class="p-3 border-r border-blue-300 text-right">Price / Unit</th>
-                                        <th class="p-3 border-r border-blue-300 text-right">Quantity</th>
-                                        <th class="p-3 border-r border-blue-300 text-center">Status</th>
-                                        <th class="p-3 text-center">Action</th>
-                                    </tr>
-                                </thead>
-                                <tbody class="divide-y divide-gray-200">
-                                    {% for item in items %}
-                                    <tr id="row-{{item.item_id}}" class="hover:bg-blue-50 transition">
-                                        <td class="p-3 border-r">{{item.item_id}}</td>
-                                        <td class="p-3 border-r">
-                                            <div
-                                                class="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center text-green-600">
-                                                <i class="fas fa-carrot"></i>
-                                            </div>
-                                        </td>
-                                        <td class="p-3 border-r font-bold text-gray-700">{{item.item_name}}</td>
-                                        <td class="p-3 border-r text-gray-600">{{item.category}}</td>
-                                        <td class="p-3 border-r text-right">
-                                            <span class="price-val" data-raw="{{item.price}}">{{item.price}}</span> /
-                                            <span class="unit-val">{{item.unit}}</span>
-                                        </td>
-                                        <td class="p-3 border-r text-right font-bold">
-                                            <span class="qty-val" data-raw="{{item.quantity}}">{{item.quantity}}</span>
-                                            {{item.unit}}
-                                        </td>
-                                        <td class="p-3 border-r text-center"><span
-                                                class="status-val px-2 py-1 bg-green-100 text-green-700 rounded-full text-xs font-bold"
-                                                data-raw="{{item.status}}">{{item.status}}</span></td>
-                                        <td class="p-3 text-center action-cell">
-                                            <button onclick="editRow('{{item.item_id}}')"
-                                                class="edit-btn text-blue-500 hover:text-blue-700 mx-1"><i
-                                                    class="fas fa-edit"></i></button>
-                                            <button class="text-red-500 hover:text-red-700 mx-1"><i
-                                                    class="fas fa-trash"></i></button>
-                                        </td>
-                                    </tr>
-                                    {% endfor %}
-                                </tbody>
-                            </table>
+                            <div class="overflow-x-auto rounded-lg border border-gray-200">
+                                <table class="w-full text-sm text-left border-collapse">
+                                    <thead class="bg-blue-400 text-white">
+                                        <tr>
+                                            <th class="p-3 border-r border-blue-300">ID</th>
+                                            <th class="p-3 border-r border-blue-300 whitespace-nowrap">Image</th>
+                                            <th class="p-3 border-r border-blue-300 whitespace-nowrap">Item Name</th>
+                                            <th class="p-3 border-r border-blue-300 whitespace-nowrap">Category</th>
+                                            <th class="p-3 border-r border-blue-300 text-right">Price / Unit</th>
+                                            <th class="p-3 border-r border-blue-300 text-right">Quantity</th>
+                                            <th class="p-3 border-r border-blue-300 text-center">Status</th>
+                                            <th class="p-3 text-center">Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="divide-y divide-gray-200">
+                                        {% for item in items %}
+                                        <tr id="row-{{item.item_id}}" class="hover:bg-blue-50 transition">
+                                            <td class="p-3 border-r">{{item.item_id}}</td>
+                                            <td class="p-3 border-r">
+                                                <div
+                                                    class="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center text-green-600">
+                                                    <i class="fas fa-carrot"></i>
+                                                </div>
+                                            </td>
+                                            <td class="p-3 border-r font-bold text-gray-700">{{item.item_name}}</td>
+                                            <td class="p-3 border-r text-gray-600">{{item.category}}</td>
+                                            <td class="p-3 border-r text-right">
+                                                <span class="price-val" data-raw="{{item.price}}">{{item.price}}</span>
+                                                /
+                                                <span class="unit-val">{{item.unit}}</span>
+                                            </td>
+                                            <td class="p-3 border-r text-right font-bold">
+                                                <span class="qty-val"
+                                                    data-raw="{{item.quantity}}">{{item.quantity}}</span>
+                                                {{item.unit}}
+                                            </td>
+                                            <td class="p-3 border-r text-center">
+                                                {% set qty = item.quantity | float %}
+                                                {% if qty <= 0 %} {% set status_text='Out of Stock' %} {% set
+                                                    status_class='bg-red-100 text-red-700' %} {% elif qty <=30 %} {% set
+                                                    status_text='Low Stock' %} {% set
+                                                    status_class='bg-yellow-100 text-yellow-800' %} {% else %} {% set
+                                                    status_text='In Stock' %} {% set
+                                                    status_class='bg-green-100 text-green-700' %} {% endif %} <span
+                                                    class="status-val px-2 py-1 {{ status_class }} rounded-full text-xs font-bold"
+                                                    data-raw="{{ status_text }}">{{ status_text }}</span>
+                                            </td>
+                                            <td class="p-3 text-center action-cell">
+                                                <button onclick="editRow('{{item.item_id}}')"
+                                                    class="edit-btn text-blue-500 hover:text-blue-700 mx-1"><i
+                                                        class="fas fa-edit"></i></button>
+                                                <button class="text-red-500 hover:text-red-700 mx-1"><i
+                                                        class="fas fa-trash"></i></button>
+                                            </td>
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
 
-            <footer
-                class="mt-auto p-6 text-center text-[11px] text-gray-400 uppercase tracking-widest border-t bg-white">
-                Copyright © 2024 | Designed by <span class="text-blue-500 font-bold">Saniro Technologies Pvt Ltd</span>
-            </footer>
+                <footer
+                    class="mt-auto p-6 text-center text-[11px] text-gray-400 uppercase tracking-widest border-t bg-white">
+                    Copyright © 2024 | Designed by <span class="text-blue-500 font-bold">Saniro Technologies Pvt
+                        Ltd</span>
+                </footer>
         </main>
     </div>
 
@@ -200,24 +223,13 @@
             // Get current values
             const priceSpan = row.querySelector('.price-val');
             const qtySpan = row.querySelector('.qty-val');
-            const statusSpan = row.querySelector('.status-val');
 
             const currentPrice = priceSpan.getAttribute('data-raw');
             const currentQty = qtySpan.getAttribute('data-raw');
-            const currentStatus = statusSpan.getAttribute('data-raw');
 
             // Replace with inputs
             priceSpan.innerHTML = `<input type="number" id="price-${id}" value="${currentPrice}" class="w-20 border rounded px-1 py-1 text-xs" step="0.01">`;
             qtySpan.innerHTML = `<input type="number" id="qty-${id}" value="${currentQty}" class="w-16 border rounded px-1 py-1 text-xs" step="any">`;
-
-            const statusSelect = `
-                <select id="status-${id}" class="border rounded px-1 py-1 text-xs">
-                    <option value="In Stock" ${currentStatus === 'In Stock' ? 'selected' : ''}>In Stock</option>
-                    <option value="Low Stock" ${currentStatus === 'Low Stock' ? 'selected' : ''}>Low Stock</option>
-                    <option value="Out of Stock" ${currentStatus === 'Out of Stock' ? 'selected' : ''}>Out of Stock</option>
-                </select>
-            `;
-            statusSpan.outerHTML = `<span id="status-span-${id}">${statusSelect}</span>`;
 
             // Change Edit button to Save button
             const actionCell = row.querySelector('.action-cell');
@@ -236,8 +248,19 @@
 
         function saveRow(id) {
             const price = document.getElementById('price-' + id).value;
-            const quantity = document.getElementById('qty-' + id).value; // Changed variable name to quantity to match backend
-            const status = document.getElementById('status-' + id).value;
+            const quantity = document.getElementById('qty-' + id).value;
+
+            // Auto-calculate status based on quantity
+            let status = 'In Stock';
+            const qtyVal = parseFloat(quantity);
+
+            if (qtyVal <= 0) {
+                status = 'Out of Stock';
+            } else if (qtyVal <= 30) {
+                status = 'Low Stock';
+            } else {
+                status = 'In Stock';
+            }
 
             fetch(`/update_inventory_item/${id}`, {
                 method: 'POST',

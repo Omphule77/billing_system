@@ -120,8 +120,33 @@ def inventory(id):
         cursor.execute(query,(id,))
         user=cursor.fetchone()
 
-        q="select * from inventory_item"
-        cursor.execute(q)
+        # Base query
+        q = "select * from inventory_item WHERE 1=1"
+        params = []
+
+        # Filter by Search (Item Name)
+        search = request.args.get('search')
+        if search:
+            q += " AND item_name LIKE %s"
+            params.append(f"%{search}%")
+
+        # Filter by Category
+        category = request.args.get('category')
+        if category:
+            q += " AND category = %s"
+            params.append(category)
+
+        # Filter by Status (Using Quantity logic)
+        status = request.args.get('status')
+        if status:
+            if status == 'Out of Stock':
+                q += " AND quantity <= 0"
+            elif status == 'Low Stock':
+                q += " AND quantity > 0 AND quantity <= 30"
+            elif status == 'In Stock':
+                q += " AND quantity > 30"
+
+        cursor.execute(q, tuple(params))
         items=cursor.fetchall()
         cursor.close()
         db.close()
@@ -294,18 +319,42 @@ def add_item(id,hotel_id,bill_no):
             # Stock Validation
             inventory_qty = float(inventory['quantity'])
             if inventory_qty < quantity:
-                flash(f'Less stock available for {veg_name}. Only {inventory_qty} {inventory["unit"]} available.', 'danger')
+                error_msg = f'Less stock available for {veg_name}. Only {inventory_qty} {inventory["unit"]} available.'
+                if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+                     cursor.close()
+                     db.close()
+                     return jsonify({'success': False, 'message': error_msg})
+                flash(error_msg, 'danger')
                 return redirect(url_for('main.add_item', id=id, hotel_id=hotel_id, bill_no=bill_no))
 
             rate=float(inventory['price'])
             item_query="insert into item_bill(veg_name,quantity,rate,price,bill_no,hotel_id,date) values(%s,%s,%s,%s,%s,%s,NOW())"
             cursor.execute(item_query,(veg_name,quantity,rate,rate* quantity,bill_no,hotel_id))
+            new_item_id = cursor.lastrowid
             
             # Reduce quantity from inventory
             update_inv_query = "UPDATE inventory_item SET quantity = quantity - %s WHERE item_name = %s"
             cursor.execute(update_inv_query, (quantity, veg_name))
             
             db.commit()
+
+            # Calculate new total
+            total_query = "SELECT SUM(price) as total FROM item_bill WHERE bill_no=%s"
+            cursor.execute(total_query, (bill_no,))
+            total_result = cursor.fetchone()
+            new_total = total_result['total'] if total_result['total'] else 0
+
+            if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+                new_item = {
+                    'item_id': new_item_id,
+                    'veg_name': veg_name,
+                    'quantity': quantity,
+                    'rate': rate,
+                    'price': rate * quantity
+                }
+                cursor.close()
+                db.close()
+                return jsonify({'success': True, 'item': new_item, 'total': new_total, 'message': 'Item added successfully!'})
 
             item_query_list="select * from item_bill where bill_no=%s"
             cursor.execute(item_query_list,(bill_no,))
@@ -315,6 +364,8 @@ def add_item(id,hotel_id,bill_no):
             return render_template('add_item.html',user=user,hotel=hotel,items=items,bill_no=bill_no)
         except Exception as e:
             print(f"Error in add_item: {e}")
+            if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+                return jsonify({'success': False, 'message': str(e)})
             flash(f"Error adding item: {e}", "danger")
             return redirect(url_for('main.add_item', id=id, hotel_id=hotel_id, bill_no=bill_no))
     else:
@@ -572,3 +623,26 @@ def registration():
             flash(f'An error occurred: {e}', 'danger')
             return render_template('registration.html')
     return render_template('registration.html')
+
+@bp.route('/search_items')
+def search_items():
+    try:
+        query = request.args.get('q', '')
+        if not query:
+            return jsonify([])
+        
+        db = get_db_connection()
+        cursor = db.cursor(dictionary=True)
+        
+        # Search for items starting with or containing the query string
+        sql = "SELECT item_name, price, unit, quantity FROM inventory_item WHERE item_name LIKE %s LIMIT 10"
+        cursor.execute(sql, (f"%{query}%",))
+        items = cursor.fetchall()
+        
+        cursor.close()
+        db.close()
+        
+        return jsonify(items)
+    except Exception as e:
+        print(f"Error in search_items: {e}")
+        return jsonify({'error': str(e)}), 500

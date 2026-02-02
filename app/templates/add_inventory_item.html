@@ -176,6 +176,29 @@
             const sidebar = document.getElementById('sidebar');
             sidebar.classList.toggle('-translate-x-full');
         }
+
+        document.addEventListener('DOMContentLoaded', function () {
+            const qtyInput = document.querySelector('input[name="quantity"]');
+            const statusSelect = document.querySelector('select[name="status"]');
+
+            if (qtyInput && statusSelect) {
+                // Make status read-only visually
+                statusSelect.classList.add('bg-gray-100', 'pointer-events-none');
+
+                qtyInput.addEventListener('input', function () {
+                    const qty = parseFloat(this.value);
+                    if (isNaN(qty)) return;
+
+                    if (qty <= 0) {
+                        statusSelect.value = 'Out of Stock';
+                    } else if (qty <= 30) {
+                        statusSelect.value = 'Low Stock';
+                    } else {
+                        statusSelect.value = 'In Stock';
+                    }
+                });
+            }
+        });
     </script>
 </body>
 

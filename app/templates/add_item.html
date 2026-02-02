@@ -98,18 +98,125 @@
                         <i class="fas fa-plus-circle text-blue-500"></i> Add New Entry
                     </h2>
 
-                    <form action="{{url_for('main.add_item', id=user['id'], hotel_id=hotel['id'], bill_no=bill_no)}}"
+                    <form id="add-item-form"
+                        action="{{url_for('main.add_item', id=user['id'], hotel_id=hotel['id'], bill_no=bill_no)}}"
                         method="post" class="grid grid-cols-1 md:grid-cols-3 gap-6 items-end">
                         <div>
                             <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Select Vegetable</label>
-                            <select name="veg_name" required
-                                class="w-full border rounded-md p-2.5 text-sm bg-gray-50 focus:ring-2 focus:ring-blue-400 outline-none">
-                                <option>Carrot</option>
-                                <option>Onion</option>
-                                <option>Tomatoes</option>
-                                <option>Potato</option>
-                            </select>
+                            <div class="relative">
+                                <input type="text" id="veg_search" name="veg_name" autocomplete="off" required
+                                    placeholder="Type to search..."
+                                    class="w-full border rounded-md p-2.5 text-sm bg-gray-50 focus:ring-2 focus:ring-blue-400 outline-none">
+                                <div id="suggestions"
+                                    class="absolute z-50 w-full bg-white border border-gray-300 rounded-b shadow-lg hidden max-h-60 overflow-y-auto">
+                                </div>
+                            </div>
                         </div>
+
+                        <script>
+                            document.addEventListener('DOMContentLoaded', function () {
+                                const searchInput = document.getElementById('veg_search');
+                                const suggestionsBox = document.getElementById('suggestions');
+
+                                searchInput.addEventListener('input', function () {
+                                    const query = this.value;
+                                    if (query.length < 1) {
+                                        suggestionsBox.classList.add('hidden');
+                                        return;
+                                    }
+
+                                    fetch(`/search_items?q=${encodeURIComponent(query)}`)
+                                        .then(response => response.json())
+                                        .then(data => {
+                                            suggestionsBox.innerHTML = '';
+                                            if (data.length > 0) {
+                                                suggestionsBox.classList.remove('hidden');
+                                                data.forEach(item => {
+                                                    const div = document.createElement('div');
+                                                    div.className = 'p-2 hover:bg-blue-50 cursor-pointer text-sm border-b last:border-b-0 flex justify-between';
+                                                    div.innerHTML = `
+                                                        <span class="font-bold text-gray-700">${item.item_name}</span>
+                                                        <span class="text-xs text-gray-500">Stock: ${item.quantity} ${item.unit}</span>
+                                                    `;
+                                                    div.onclick = function () {
+                                                        searchInput.value = item.item_name;
+                                                        suggestionsBox.classList.add('hidden');
+                                                    };
+                                                    suggestionsBox.appendChild(div);
+                                                });
+                                            } else {
+                                                suggestionsBox.classList.add('hidden');
+                                            }
+                                        })
+                                        .catch(err => console.error('Error fetching items:', err));
+                                });
+
+                                // Hide suggestions when clicking outside
+                                document.addEventListener('click', function (e) {
+                                    if (!searchInput.contains(e.target) && !suggestionsBox.contains(e.target)) {
+                                        suggestionsBox.classList.add('hidden');
+                                    }
+                                });
+
+                                // AJAX Form Submission
+                                const form = document.getElementById('add-item-form');
+                                form.addEventListener('submit', function (e) {
+                                    e.preventDefault();
+
+                                    const formData = new FormData(form);
+
+                                    fetch(form.action, {
+                                        method: 'POST',
+                                        body: formData,
+                                        headers: {
+                                            'X-Requested-With': 'XMLHttpRequest'
+                                        }
+                                    })
+                                        .then(response => response.json())
+                                        .then(data => {
+                                            if (data.success) {
+                                                // Add row to table
+                                                const tbody = document.getElementById('items-tbody');
+                                                const rowCount = tbody.rows.length + 1;
+                                                const item = data.item;
+
+                                                const tr = document.createElement('tr');
+                                                tr.className = 'hover:bg-blue-50 transition';
+                                                tr.innerHTML = `
+                                                <td class="p-3 border-r">${rowCount}</td>
+                                                <td class="p-3 border-r font-bold text-blue-900">${item.veg_name}</td>
+                                                <td class="p-3 border-r">${item.quantity}</td>
+                                                <td class="p-3 border-r text-right">₹${item.rate}</td>
+                                                <td class="p-3 border-r text-right font-bold">${item.price}</td>
+                                                <td class="p-3 text-center">
+                                                    <a href="/delete_item/{{user['id']}}/{{hotel['id']}}/${item.item_id}"
+                                                        class="text-red-500 hover:text-red-700 transition">
+                                                        <i class="fas fa-times-circle text-lg"></i>
+                                                    </a>
+                                                </td>
+                                            `;
+                                                tbody.appendChild(tr);
+
+                                                // Update Total
+                                                document.getElementById('total-value').innerText = '₹' + data.total;
+
+                                                // Reset form
+                                                form.reset();
+                                                // Re-focus search
+                                                searchInput.focus();
+
+                                                // Show success message (optional, maybe a small toast)
+                                            } else {
+                                                alert(data.message);
+                                            }
+                                        })
+                                        .catch(error => {
+                                            console.error('Error:', error);
+                                            alert('An error occurred while adding the item.');
+                                        });
+                                });
+                            });
+                        </script>
 
                         <div>
                             <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Quantity (in kg)</label>
@@ -117,7 +224,7 @@
                                 class="w-full border rounded-md p-2.5 text-sm bg-gray-50 focus:ring-2 focus:ring-blue-400 outline-none">
                         </div>
 
-                        <button
+                        <button type="submit"
                             class="bg-saniro-blue text-white py-2.5 rounded-md font-bold uppercase tracking-wider hover:bg-blue-800 transition shadow-md">
                             Add to List
                         </button>
@@ -141,7 +248,7 @@
                                     <th class="p-3 text-center">Actions</th>
                                 </tr>
                             </thead>
-                            <tbody class="divide-y divide-gray-200">
+                            <tbody id="items-tbody" class="divide-y divide-gray-200">
                                 {% set x=namespace(total=0) %}
                                 {% for item in items %}
                                 <tr class="hover:bg-blue-50 transition">
@@ -163,7 +270,8 @@
                             <tfoot class="bg-saniro-blue text-white font-bold">
                                 <tr>
                                     <td colspan="4" class="p-3 text-right uppercase text-xs">Total Stock Value</td>
-                                    <td class="p-3 text-right text-lg border-r border-blue-400">₹{{x.total}}</td>
+                                    <td id="total-value" class="p-3 text-right text-lg border-r border-blue-400">
+                                        ₹{{x.total}}</td>
                                     <td class="p-3"></td>
                                 </tr>
                             </tfoot>
