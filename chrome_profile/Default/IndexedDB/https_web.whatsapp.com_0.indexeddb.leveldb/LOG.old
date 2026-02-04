@@ -1,0 +1,28 @@
+2026/02/04-22:08:21.172 4840 Reusing MANIFEST C:\Users\omphu\Desktop\Python project\billing_system\chrome_profile\Default\IndexedDB\https_web.whatsapp.com_0.indexeddb.leveldb/MANIFEST-000001
+2026/02/04-22:08:21.172 4840 Recovering log #218
+2026/02/04-22:08:21.202 4840 Reusing old log C:\Users\omphu\Desktop\Python project\billing_system\chrome_profile\Default\IndexedDB\https_web.whatsapp.com_0.indexeddb.leveldb/000218.log 
+2026/02/04-22:08:28.303 4840 Level-0 table #228: started
+2026/02/04-22:08:28.337 4840 Level-0 table #228: 1380197 bytes OK
+2026/02/04-22:08:28.339 4840 Delete type=0 #218
+2026/02/04-22:08:28.341 4840 Compacting 1@1 + 6@2 files
+2026/02/04-22:08:28.409 4840 Generated table #229@1: 83014 keys, 2231014 bytes
+2026/02/04-22:08:28.462 4840 Generated table #230@1: 53118 keys, 2261649 bytes
+2026/02/04-22:08:28.514 4840 Generated table #231@1: 22918 keys, 2179897 bytes
+2026/02/04-22:08:28.565 4840 Generated table #232@1: 20925 keys, 2192694 bytes
+2026/02/04-22:08:28.602 4840 Generated table #233@1: 22120 keys, 2148286 bytes
+2026/02/04-22:08:28.647 4840 Generated table #234@1: 47833 keys, 1338401 bytes
+2026/02/04-22:08:28.647 4840 Compacted 1@1 + 6@2 files => 12351941 bytes
+2026/02/04-22:08:28.648 4840 compacted to: files[ 0 0 6 0 0 0 0 ]
+2026/02/04-22:08:30.216 4840 Level-0 table #236: started
+2026/02/04-22:08:30.256 4840 Level-0 table #236: 1260880 bytes OK
+2026/02/04-22:08:30.257 4840 Delete type=2 #220
+2026/02/04-22:08:30.257 4840 Delete type=2 #221
+2026/02/04-22:08:30.257 4840 Delete type=2 #222
+2026/02/04-22:08:30.257 4840 Delete type=2 #223
+2026/02/04-22:08:30.257 4840 Delete type=2 #224
+2026/02/04-22:08:30.257 4840 Delete type=2 #225
+2026/02/04-22:08:30.257 4840 Delete type=0 #227
+2026/02/04-22:08:30.257 4840 Delete type=2 #228
+2026/02/04-22:08:30.272 4840 Compacting 1@1 + 6@2 files
+2026/02/04-22:08:30.372 4840 Generated table #237@1: 77370 keys, 2224334 bytes
+2026/02/04-22:08:30.400 4840 compacted to: files[ 0 1 6 0 0 0 0 ]

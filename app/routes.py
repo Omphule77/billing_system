@@ -1,5 +1,9 @@
 from flask import Blueprint, render_template, request, redirect, url_for, flash, current_app, session, jsonify
 import mysql.connector
+import os
+from app.utils import generate_pdf
+from app.whatsapp_utils import send_whatsapp_message
+from app.drive_utils import upload_to_drive
 
 bp = Blueprint('main', __name__)
 
@@ -646,3 +650,108 @@ def search_items():
     except Exception as e:
         print(f"Error in search_items: {e}")
         return jsonify({'error': str(e)}), 500
+
+@bp.route('/send_bill_whatsapp/<int:id>/<int:hotel_id>/<int:bill_no>', methods=['POST'])
+def send_bill_whatsapp(id, hotel_id, bill_no):
+    print(f"\n\n!!! USER REQUEST START: ID={id}, Hotel={hotel_id}, Bill={bill_no} !!!")
+    try:
+        db = get_db_connection()
+        cursor = db.cursor(dictionary=True)
+
+        # Get Data for PDF
+        # User
+        query = "select * from registration where id=%s"
+        cursor.execute(query, (id,))
+        user = cursor.fetchone()
+
+        # Hotel
+        q = "select * from hotel where id=%s"
+        cursor.execute(q, (hotel_id,))
+        hotel = cursor.fetchone()
+
+        if not user or not hotel:
+             cursor.close()
+             db.close()
+             return jsonify({'success': False, 'message': 'User or Hotel not found.'}), 404
+
+        # Items
+        item_query = "select * from item_bill where bill_no=%s"
+        cursor.execute(item_query, (bill_no,))
+        items = cursor.fetchall()
+        
+        cursor.close()
+        db.close()
+
+        # Render HTML for PDF
+        from datetime import datetime
+        html = render_template('pdf_bill.html', user=user, hotel=hotel, items=items, bill_no=bill_no, date=datetime.now().strftime("%d-%m-%Y"))
+        
+        # Determine paths - SAVE TO STATIC FOLDER
+        pdf_filename = f"bill_{bill_no}_{hotel_id}.pdf"
+        
+        # Ensure static/bills exists
+        static_bills_dir = os.path.join(current_app.root_path, 'static', 'bills')
+        if not os.path.exists(static_bills_dir):
+            os.makedirs(static_bills_dir)
+            
+        pdf_path = os.path.join(static_bills_dir, pdf_filename)
+        print(f"Using static PDF path: {pdf_path}")
+        
+        # Generate PDF
+        success = generate_pdf(html, pdf_path)
+        
+        # Verify file size
+        file_size = 0
+        if success and os.path.exists(pdf_path):
+            file_size = os.path.getsize(pdf_path)
+            print(f"Generated PDF size: {file_size} bytes")
+        
+        if file_size < 100:
+             print("PDF corrupted or too small. Attempting fallback simple PDF...")
+             simple_html = "<html><body><h1>FALLBACK BILL</h1><p>The original bill generation failed.</p></body></html>"
+             generate_pdf(simple_html, pdf_path)
+             
+             print(f"PDF Generated Successfully (Fallback): {pdf_path}")
+        
+        # PROCEED IF FILE EXISTS (Original or Fallback)
+        if os.path.exists(pdf_path):
+             # Upload to Google Drive
+             try:
+                 pdf_link = upload_to_drive(pdf_path, pdf_filename)
+                 print(f"Docs Link: {pdf_link}")
+             except Exception as e:
+                 print(f"Drive Upload Failed: {e}")
+                 # Fallback to local (though it won't work on mobile)
+                 pdf_link = f"FAILED_UPLOAD_LOCAL_PATH: {pdf_path}"
+
+             # Send via WhatsApp
+             mobile = hotel['mobile']
+             # Format mobile (India specific 91)
+             import re
+             clean_mobile = re.sub(r'\D', '', str(mobile))
+             if len(clean_mobile) == 10:
+                 clean_mobile = '91' + clean_mobile
+             
+             # Calculate total
+             total = sum([float(item['price'] or 0) for item in items])
+             
+             # Construct Message with Link
+             msg = f"Hello {hotel['hotel_name']}, please find the generated bill #{bill_no} here: {pdf_link} . Total Amount: Rs. {total}."
+             
+             # Send Text Only (File Path = None)
+             success, message = send_whatsapp_message(clean_mobile, msg, file_path=None)
+             
+             if success:
+                 return jsonify({'success': True, 'message': 'Bill link sent via WhatsApp successfully!'})
+             else:
+                  with open("error.log", "a") as f:
+                       f.write(f"Whatsapp Failure: {message}\n")
+                  return jsonify({'success': False, 'message': f'Failed to send WhatsApp: {message}'})
+        else:
+             return jsonify({'success': False, 'message': 'Failed to generate PDF (Empty File).'})
+
+    except Exception as e:
+        print(f"Error in send_bill_whatsapp: {e}")
+        with open("error.log", "a") as f:
+             f.write(f"Error: {str(e)}\n")
+        return jsonify({'success': False, 'message': str(e)}), 500

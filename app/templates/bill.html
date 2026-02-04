@@ -106,11 +106,75 @@
             class="bg-blue-600 text-white px-8 py-3 rounded shadow-lg hover:bg-blue-700 font-bold">
             <i class="fas fa-print mr-2"></i> Print / Save as PDF
         </button>
-        <a href="{{ url_for('main.create_bill', id=user['id']) }}"
+        <button onclick="sendToWhatsappAndRedirect()"
             class="bg-gray-500 text-white px-8 py-3 rounded shadow-lg hover:bg-gray-600 font-bold ml-4">
-            Back to Dashboard
-        </a>
+            SEND WHATSAPP & EXIT
+        </button>
     </div>
+
+    <div class="fixed inset-0 bg-gray-900 bg-opacity-50 hidden flex items-center justify-center z-50" id="loadingModal">
+        <div class="bg-white p-8 rounded-lg shadow-xl text-center">
+            <div class="animate-spin rounded-full h-16 w-16 border-b-2 border-blue-600 mx-auto mb-4"></div>
+            <h3 class="text-xl font-bold text-gray-800">Sending Bill via WhatsApp...</h3>
+            <p class="text-gray-600 mt-2">Please do not close this window. <br> A browser window may open on the server.
+            </p>
+        </div>
+    </div>
+
+    <script>
+        function sendToWhatsappAndRedirect() {
+            try {
+                // Show loader
+                document.getElementById('loadingModal').classList.remove('hidden');
+
+                const hotelId = "{{ hotel['id'] }}";
+                const billNo = "{{ bill_no }}";
+                const userId = "{{ user['id'] }}";
+                const dashboardUrl = "{{ url_for('main.create_bill', id=user['id']) }}";
+
+                if (!hotelId || !billNo || !userId) {
+                    alert("Error: Missing data. HotelID: " + hotelId + ", BillNo: " + billNo + ", UserID: " + userId);
+                    document.getElementById('loadingModal').classList.add('hidden');
+                    return;
+                }
+
+                const url = `/send_bill_whatsapp/${userId}/${hotelId}/${billNo}`;
+                // alert("Debug: Sending request to " + url); // Optional: uncomment if needed, but might be annoying
+
+                // Call backend API
+                fetch(url, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    }
+                })
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error("HTTP Status: " + response.status);
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        if (data.success) {
+                            alert("Success: " + data.message);
+                            window.location.href = dashboardUrl;
+                        } else {
+                            alert("Server Error: " + data.message);
+                            document.getElementById('loadingModal').classList.add('hidden');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        alert("Fetch Error: " + error.message + "\nCheck console for details.");
+                        document.getElementById('loadingModal').classList.add('hidden');
+                    });
+            } catch (e) {
+                alert("Critical JS Error: " + e.message);
+                document.getElementById('loadingModal').classList.add('hidden');
+            }
+        }
+    </script>
+
 
 </body>
 

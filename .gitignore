@@ -4,3 +4,9 @@ instance/
 .env
 .DS_Store
 *.pyc
+
+credentials.json
+token.json
+execution.log
+app/static/bills/*.pdf
+*.log
