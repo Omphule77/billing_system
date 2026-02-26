@@ -10,3 +10,5 @@ token.json
 execution.log
 app/static/bills/*.pdf
 *.log
+
+chrome_profile/

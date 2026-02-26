@@ -29,7 +29,7 @@
 
             <div class="p-4 flex items-center justify-between border-b border-blue-800">
                 <div class="bg-white p-1 rounded px-3">
-                    <span class="text-[#234b9b] font-black text-xl tracking-tighter">SANIRO</span>
+                    <span class="text-[#234b9b] font-black text-xl tracking-tighter">NIRANJAN</span>
                 </div>
                 <button onclick="toggleSidebar()" class="md:hidden text-white"><i class="fas fa-times"></i></button>
             </div>
@@ -72,8 +72,8 @@
                         <i class="fas fa-bell text-blue-500 cursor-pointer"></i>
                     </div>
                     <div class="flex items-center gap-2">
-                        <span class="text-sm font-bold text-gray-700 hidden sm:inline">John Doe</span>
-                        <img src="https://ui-avatars.com/api/?name=John+Doe" class="rounded-full w-8 h-8">
+                        <span class="text-sm font-bold text-gray-700 hidden sm:inline">{{ user['name'] }}</span>
+                        <img src="https://ui-avatars.com/api/?name={{ user['name'] }}" class="rounded-full w-8 h-8">
                     </div>
                 </div>
             </header>
@@ -157,7 +157,8 @@
 
             <footer
                 class="mt-auto p-6 text-center text-[11px] text-gray-400 uppercase tracking-widest border-t bg-white">
-                Copyright © 2024 | Designed by <span class="text-blue-500 font-bold">Saniro Technologies Pvt Ltd</span>
+                Copyright © 2024 | Designed by <span class="text-blue-500 font-bold">Niranjan Technologies Pvt
+                    Ltd</span>
             </footer>
         </main>
     </div>

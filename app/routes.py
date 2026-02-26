@@ -467,27 +467,45 @@ def sales(id):
         cursor.execute(query,(id,))
         user=cursor.fetchone()
 
+        # Get Date Filter Parameters
+        import datetime
+        current_date = datetime.datetime.now()
+        
+        try:
+            selected_month = int(request.args.get('month', current_date.month))
+            selected_year = int(request.args.get('year', current_date.year))
+        except ValueError:
+            selected_month = current_date.month
+            selected_year = current_date.year
+
+        try:
+            revenue_year = int(request.args.get('revenue_year', selected_year))
+        except ValueError:
+            revenue_year = selected_year
+
         # 1. Item Quantity This Month (Pie Chart)
         item_query = """
             SELECT veg_name, SUM(quantity) as total_qty 
             FROM item_bill 
-            WHERE MONTH(date) = MONTH(CURRENT_DATE()) AND YEAR(date) = YEAR(CURRENT_DATE())
+            WHERE MONTH(date) = %s AND YEAR(date) = %s
             GROUP BY veg_name
         """
-        cursor.execute(item_query)
+        cursor.execute(item_query, (selected_month, selected_year))
         item_results = cursor.fetchall()
         item_labels = [row['veg_name'] for row in item_results]
         item_values = [float(row['total_qty']) for row in item_results]
 
-        # 2. Monthly Revenue This Year (Histogram/Bar)
+        # 2. Monthly Revenue This Year (Histogram/Bar) - Keep this for the whole year context, or filter? 
+        # Requirement says "choose which month and year i want to see the data". 
+        # For monthly revenue comparison, usually showing the whole year of the SELECTED year is better.
         revenue_query = """
             SELECT MONTHNAME(date) as month, SUM(price) as total_revenue
             FROM item_bill
-            WHERE YEAR(date) = YEAR(CURRENT_DATE())
+            WHERE YEAR(date) = %s
             GROUP BY MONTH(date), MONTHNAME(date)
             ORDER BY MONTH(date)
         """
-        cursor.execute(revenue_query)
+        cursor.execute(revenue_query, (revenue_year,))
         revenue_results = cursor.fetchall()
         month_labels = [row['month'] for row in revenue_results]
         month_values = [float(row['total_revenue']) for row in revenue_results]
@@ -497,11 +515,11 @@ def sales(id):
             SELECT h.hotel_name, SUM(ib.price) as total_spent
             FROM item_bill ib
             JOIN hotel h ON ib.hotel_id = h.id
-            WHERE MONTH(ib.date) = MONTH(CURRENT_DATE()) AND YEAR(ib.date) = YEAR(CURRENT_DATE())
+            WHERE MONTH(ib.date) = %s AND YEAR(ib.date) = %s
             GROUP BY h.id, h.hotel_name
             ORDER BY total_spent DESC
         """
-        cursor.execute(hotel_query)
+        cursor.execute(hotel_query, (selected_month, selected_year))
         hotel_results = cursor.fetchall()
         hotel_labels = [row['hotel_name'] for row in hotel_results]
         hotel_values = [float(row['total_spent']) for row in hotel_results]
@@ -509,16 +527,20 @@ def sales(id):
         cursor.close()
         db.close()
 
-        import datetime
-        current_date = datetime.datetime.now()
-        year_month = current_date.strftime("%B %Y")
+        # Format display string
+        # datetime module is already imported inside function scope in original code, but let's use the one we imported above
+        display_date = datetime.date(selected_year, selected_month, 1)
+        year_month = display_date.strftime("%B %Y")
 
         return render_template('sales.html', 
                              user=user,
                              item_labels=item_labels, item_values=item_values,
                              month_labels=month_labels, month_values=month_values,
                              hotel_labels=hotel_labels, hotel_values=hotel_values,
-                             year_month=year_month)
+                             year_month=year_month,
+                             selected_month=selected_month,
+                             selected_year=selected_year,
+                             revenue_year=revenue_year)
 
     except Exception as e:
         print(f"Error in sales: {e}")
