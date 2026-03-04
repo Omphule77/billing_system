@@ -7,13 +7,13 @@ db = SQLAlchemy()
 migrate = Migrate()
 
 def create_app(config_class=Config):
-    app = Flask(__name__)
-    app.config.from_object(config_class)
+    application = Flask(__name__)
+    application.config.from_object(config_class)
 
-    db.init_app(app)
-    migrate.init_app(app, db)
+    db.init_app(application)
+    migrate.init_app(application, db)
     
     from app import routes, models
-    app.register_blueprint(routes.bp)
+    application.register_blueprint(routes.bp)
 
-    return app
+    return application
