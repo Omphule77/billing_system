@@ -2,7 +2,7 @@ from flask import Blueprint, render_template, request, redirect, url_for, flash,
 import mysql.connector
 import os
 from app.utils import generate_pdf
-from app.whatsapp_utils import send_whatsapp_message
+
 from app.drive_utils import upload_to_drive
 
 bp = Blueprint('main', __name__)
@@ -675,6 +675,7 @@ def search_items():
 
 @bp.route('/send_bill_whatsapp/<int:id>/<int:hotel_id>/<int:bill_no>', methods=['POST'])
 def send_bill_whatsapp(id, hotel_id, bill_no):
+    from app.whatsapp_utils import send_whatsapp_message
     print(f"\n\n!!! USER REQUEST START: ID={id}, Hotel={hotel_id}, Bill={bill_no} !!!")
     try:
         db = get_db_connection()
