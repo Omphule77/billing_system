@@ -1,14 +1,10 @@
 import os
+import pymysql
 
-class Config:
-    SECRET_KEY = os.environ.get('SECRET_KEY') or 'you-will-never-guess'
-    SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL') or 'sqlite:///app.db'
-    SQLALCHEMY_TRACK_MODIFICATIONS = False
-
-    # MySQL Configuration
-    MYSQL_HOST = os.environ.get('MYSQL_HOST') or 'localhost'
-    MYSQL_USER = os.environ.get('MYSQL_USER') or 'root'
-    MYSQL_PASSWORD = os.environ.get('MYSQL_PASSWORD') or 'Omphule13@'
-    MYSQL_DB = os.environ.get('MYSQL_DB') or 'billing_system'
-
-
+connection = pymysql.connect(
+    host=os.environ.get("DB_HOST", "localhost"),
+    user=os.environ.get("DB_USER", "root"),
+    password=os.environ.get("DB_PASSWORD", "your_local_password"),
+    database=os.environ.get("DB_NAME", "billing_system"),
+    port=int(os.environ.get("DB_PORT", 3306))
+)
