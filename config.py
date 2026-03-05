@@ -10,7 +10,7 @@ class Config:
     # If DATABASE_URL exists (Production - AWS)
     # use it directly
     if os.environ.get("DATABASE_URL"):
-        SQLALCHEMY_DATABASE_URI = os.environ.get("DATABASE_URL")
+        SQLALCHEMY_DATABASE_URI = os.environ.get("DATABASE_URL","mysql+pymysql://admin:Omphule13@billing-mysql.cd8q4eekysoe.eu-north-1.rds.amazonaws.com:3306/billing_system")
     else:
         # Local development fallback
         MYSQL_HOST = os.environ.get("DB_HOST", "localhost")
