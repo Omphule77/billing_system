@@ -16,7 +16,7 @@ class Config:
         MYSQL_HOST = os.environ.get("DB_HOST", "localhost")
         MYSQL_USER = os.environ.get("DB_USER", "root")
         MYSQL_PASSWORD = os.environ.get("DB_PASSWORD", "Omphule13@")
-        MYSQL_DB = os.environ.get("DB_NAME", "billing_system")
+        MYSQL_DB = os.environ.get("DB_NAME", "mysql")
         MYSQL_PORT = os.environ.get("DB_PORT", "3306")
 
         SQLALCHEMY_DATABASE_URI = (
